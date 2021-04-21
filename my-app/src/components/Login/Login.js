@@ -21,19 +21,21 @@ async function loginUser(credentials) {
 }
 
 export default function Login({ setToken }) {
-  const [username, setUserName] = useState();
+  const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [message, setMessage] = useState();
 
   const handleSubmit = async e => {
     e.preventDefault();
 
     const data = {
-      "user_name": username,
+      "email": email,
       "password": password
     }
 
     const token = await loginUser(data);
-
+    if(token.code)
+      setMessage(token.message);
     setToken(token);
   }
 
@@ -43,12 +45,25 @@ export default function Login({ setToken }) {
       <h1>Log In</h1>
       <form id="loginForm" neme="loginForm">
         <label>
-          <p>Username</p>
-          <input type="text" id="user_name" name="user_name" onChange={e => setUserName(e.target.value)} />
+          <p>Email</p>
+          <input 
+            type="email" 
+            placeholder="jhondoe@example.com" 
+            id="email" 
+            name="email" 
+            //value={email}
+            onChange={e => setEmail(e.target.value)} 
+          />
         </label>
         <label>
           <p>Password</p>
-          <input type="password" id="password" name="password" onChange={e => setPassword(e.target.value)} />
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            //value={password}
+            onChange={e => setPassword(e.target.value)} 
+          />
         </label>
         <br /><br />
         <div>
@@ -56,10 +71,12 @@ export default function Login({ setToken }) {
         </div>
         <br />
       </form>
+      <div>{message}</div>
     </div>
   )
 }
 
 Login.propTypes = {
-  setToken: PropTypes.func.isRequired
+  setToken: PropTypes.func.isRequired,
+  value: PropTypes.string,
 }
