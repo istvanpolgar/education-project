@@ -1,10 +1,37 @@
-import React from 'react'
-import '../../App.css';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { 
+    BrowserRouter as Router, 
+    Switch,
+    Route,
+  } from 'react-router-dom';
+import Login from '../Login/Login';
+import Registration from '../Registration/Registration';
+import Header from '../Header/Header';
+import Navbar from '../Navbar/Navbar';
 
-export default function Homepage(){
+export default function Homepage( { setToken } ){
     return (
-        <div className="Home">
-            <h2> This is the Home Page </h2>
-        </div>
-    )
+        <Router>
+            <Navbar />
+            <Switch>
+                <Route exact path="/">
+                    <Header />
+                </Route>
+                <Route path="/login">
+                    <Login setToken={ setToken }/>
+                </Route>
+                <Route path="/signup">
+                    <Registration />
+                </Route>
+                <Route path="/page">
+                    <Header />
+                </Route>
+            </Switch>
+        </Router>
+    );
+}
+
+Homepage.propTypes = {
+    setToken: PropTypes.func.isRequired
 }

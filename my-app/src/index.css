@@ -4,14 +4,3 @@ body {
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
-footer {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    
-    text-align: center;
-    padding: 3px;
-    background-color: darkslategray;
-    color: white;
-}

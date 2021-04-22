@@ -37,10 +37,30 @@ app.post('/login', async (req, res) => {
     const password = req.body.password;
 
     await firebase.auth().signInWithEmailAndPassword(email, password)
-    .then((userCredential) => {
+    .then(() => {
       const token = randtoken.generate(16);
       res.send({
         "token": token
+      });
+    })
+    .catch((error) => {
+      res.send(error);
+    });
+  } catch (e) {
+    res.send(error);
+  }
+});
+
+app.post('/logout', async (req, res) => {
+  try{
+    const email = req.body.email;
+    const password = req.body.password;
+
+    await firebase.auth().signOut()
+    .then((something) => {
+      console.log(something);
+      res.send({
+        "token": ""
       });
     })
     .catch((error) => {

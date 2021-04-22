@@ -1,39 +1,43 @@
 import React from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
+import { 
+  BrowserRouter as Router, 
+  Switch,
+  Route,
+} from 'react-router-dom';
 
 import './App.css';
 
 import Homepage from './components/Homepage/Homepage';
 import Header from './components/Header/Header';
-import User from './components/User/User';
-import Login from './components/Login/Login';
-import useToken from './components/UseToken/useToken';
+import Navbar from './components/Navbar/Navbar';
+import Logout from './components/Logout/Logout'
 
-const url = 'http://localhost:8080';
+import useToken from './components/UseToken/useToken';
 
 function App() {
   const { token, setToken } = useToken();
 
-  if(!token) {
-    return <Login setToken={setToken} />
-  }
-
   console.log(token);
+
+  if(!token) {
+    return (
+      <Homepage setToken={ setToken }/>
+    )
+  }
 
   return(
     <div className="App">
-      <Header />
-      <BrowserRouter>
+      <Router>
         <Switch>
-          <Route path="/homepage">
-            <Homepage />
+          <Route path="/page">
+            <Navbar />
+            <Header />
           </Route>
-          <Route path="/users">
-            <User />
+          <Route path="/logout">
+            <Logout setToken = {setToken} />
           </Route>
         </Switch>
-      </BrowserRouter>
+      </Router>
     </div>
   );
 }
