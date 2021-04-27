@@ -11,6 +11,11 @@ import Header from '../Header/Header';
 import Navbar from '../Navbar/Navbar';
 
 export default function Homepage( { setToken } ){
+    function logOut() {
+        setToken('');
+        window.location.href='/';
+    }
+
     return (
         <Router>
             <Navbar />
@@ -26,6 +31,9 @@ export default function Homepage( { setToken } ){
                 </Route>
                 <Route path="/page">
                     <Header />
+                </Route>
+                <Route path="/logout">
+                    {logOut}
                 </Route>
             </Switch>
         </Router>

@@ -3,6 +3,7 @@ const cors = require('cors');
 const app = express();
 const firebase = require('firebase');
 const randtoken = require('rand-token');
+const Joi = require('./node_modules/joi');
 require('firebase-admin');
 
 const port = 8080;
@@ -17,6 +18,18 @@ firebase.initializeApp({
   appId: "1:171145889551:web:09ac8165bc513f220fe07a",
   measurementId: "G-M0MMQR8SBV"
 });
+
+const admin = firebase.auth();
+const database = firebase.database();
+
+const Schema = Joi.object({
+  fname: Joi.string().min(3).max(128).required(),
+  lname: Joi.string().min(3).max(128).required(),
+  email: Joi.string().email().min(8).max(256).required(),
+  password: Joi.string().min(3).max(128).required(),
+  conf_password: Joi.string().valid(Joi.ref('password')).required(),
+  teacher: Joi.boolean()
+})
 
 app.use(cors());
 
@@ -36,7 +49,7 @@ app.post('/login', async (req, res) => {
     const email = req.body.email;
     const password = req.body.password;
 
-    await firebase.auth().signInWithEmailAndPassword(email, password)
+    await admin.signInWithEmailAndPassword(email, password)
     .then(() => {
       const token = randtoken.generate(16);
       res.send({
@@ -47,27 +60,51 @@ app.post('/login', async (req, res) => {
       res.send(error);
     });
   } catch (e) {
-    res.send(error);
+    res.json({code: 400, message: "Both fields are required!"});
   }
 });
 
-app.post('/logout', async (req, res) => {
+app.post('/regist', async (req, res) => {
   try{
-    const email = req.body.email;
-    const password = req.body.password;
+    const {
+      fname,
+      lname,
+      email,
+      password,
+      conf_password,
+      teacher
+    } = req.body;
 
-    await firebase.auth().signOut()
-    .then((something) => {
-      console.log(something);
-      res.send({
-        "token": ""
-      });
+    await Schema.validateAsync(req.body)
+    .then( () => {
+        admin.createUserWithEmailAndPassword(email, password).
+        then( () => {
+          database
+          .ref('users/' + admin.currentUser.uid)
+          .set({
+              fname: fname,
+              lname: lname,
+              email: email,
+              password: password,
+              teacher: teacher
+          }).
+          then(() => {
+            res.send({'status': 'Registration ok'});
+          })
+          .catch((error) => {
+            res.send(error);
+          });
+        })
+        .catch((error) => {
+          res.send(error);
+        });
     })
     .catch((error) => {
-      res.send(error);
+      res.send({code: 400, message: error.message});
+
     });
   } catch (e) {
-    res.send(error);
+    res.send({code: 400, message: "All fields are required!"});
   }
 });
 

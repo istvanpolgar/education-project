@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
-    backgroundColor: theme.palette.primary.grey,
+    backgroundColor: 'grey',
   },
 }));
 
@@ -67,8 +67,10 @@ export default function Login({ setToken }) {
     const token = await loginUser(data);
     if(token.code)
       setMessage(token.message);
-    setToken(token);
-    window.location.href='/page';
+    else{
+      setToken(token);
+      window.location.href='/page';
+    }
   }
 
   return(
@@ -85,9 +87,13 @@ export default function Login({ setToken }) {
           component="h1" 
           variant="h5"
         >
-          Sign in
+          Sign In
         </Typography>
-        <form onSubmit={handleSubmit} className={classes.form} noValidate>
+        <form 
+          onSubmit={handleSubmit} 
+          className={classes.form} 
+          noValidate
+        >
           <TextField
             variant="outlined"
             margin="normal"

@@ -10,7 +10,6 @@ import './App.css';
 import Homepage from './components/Homepage/Homepage';
 import Header from './components/Header/Header';
 import Navbar from './components/Navbar/Navbar';
-import Logout from './components/Logout/Logout'
 
 import useToken from './components/UseToken/useToken';
 
@@ -18,6 +17,11 @@ function App() {
   const { token, setToken } = useToken();
 
   console.log(token);
+
+  function logOut() {
+    setToken('');
+    window.location.href='/';
+  }
 
   if(!token) {
     return (
@@ -32,9 +36,10 @@ function App() {
           <Route path="/page">
             <Navbar />
             <Header />
+            
           </Route>
           <Route path="/logout">
-            <Logout setToken = {setToken} />
+            {logOut}
           </Route>
         </Switch>
       </Router>

@@ -1,34 +1,18 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Switch from '@material-ui/core/Switch';
 
 const url = 'http://localhost:8080';
-
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -39,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   },
   avatar: {
     margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    backgroundColor: theme.palette.primary.grey,
   },
   form: {
     width: '100%', // Fix IE 11 issue.
@@ -47,11 +31,55 @@ const useStyles = makeStyles((theme) => ({
   },
   submit: {
     margin: theme.spacing(3, 0, 2),
+    backgroundColor: 'grey',
   },
 }));
 
+async function signUpUser(credentials) {
+  return fetch(url + '/regist', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(credentials)
+  })
+    .then(data => data.json())
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
 export default function Registration() {  
+  const [fname, setFName] = useState();
+  const [lname, setLName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [conf_password, setConfPassword] = useState();
+  const [teacher, setTeacher] = useState();
+  const [message, setMessage] = useState();
+
   const classes = useStyles();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+
+    setTeacher(false);
+
+    const data = {
+      "fname": fname,
+      "lname": lname,
+      "email": email,
+      "password": password,
+      "conf_password": conf_password,
+      "teacher": teacher
+    }
+
+    const reg = await signUpUser(data);
+    if(reg.code)
+      setMessage(reg.message);
+    else
+      window.location.href='/login';
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -61,14 +89,19 @@ export default function Registration() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign up
+          Sign Up
         </Typography>
-        <form className={classes.form} noValidate>
+        <form 
+          onSubmit={handleSubmit}
+          className={classes.form} 
+          noValidate
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6}>
               <TextField
                 autoComplete="fname"
                 name="firstName"
+                onChange={e => setFName(e.target.value)}
                 variant="outlined"
                 required
                 fullWidth
@@ -85,6 +118,7 @@ export default function Registration() {
                 id="lastName"
                 label="Last Name"
                 name="lastName"
+                onChange={e => setLName(e.target.value)}
                 autoComplete="lname"
               />
             </Grid>
@@ -96,28 +130,61 @@ export default function Registration() {
                 id="email"
                 label="Email Address"
                 name="email"
+                onChange={e => setEmail(e.target.value)}
                 autoComplete="email"
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12}  sm={6}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
                 name="password"
+                onChange={e => setPassword(e.target.value)}
                 label="Password"
                 type="password"
                 id="password"
                 autoComplete="current-password"
               />
             </Grid>
-            <Grid item xs={12}>
-              <FormControlLabel
-                control={<Checkbox value="allowExtraEmails" color="primary" />}
-                label="I want to receive inspiration, marketing promotions and updates via email."
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="conf_password"
+                onChange={e => setConfPassword(e.target.value)}
+                label="Confirm password"
+                type="password"
+                id="conf_password"
+                autoComplete="current-password"
               />
             </Grid>
+            <Grid item xs={12}>
+            <Typography component="div">
+              <Grid 
+                component="label" 
+                container 
+                alignItems="center" 
+                spacing={1}>
+                <Grid item>Student</Grid>
+                <Grid item>
+                  <Switch 
+                    onChange={e => setTeacher(true)} 
+                    />
+                </Grid>
+                <Grid item>Teacher</Grid>
+              </Grid>
+            </Typography>
+            </Grid>
           </Grid>
+          <Typography 
+            variant="caption" 
+            display="block"
+            color="error"
+          >
+            {message}
+          </Typography>
           <Button
             type="submit"
             fullWidth
@@ -129,16 +196,16 @@ export default function Registration() {
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="#" variant="body2">
+              <Link 
+                href="/login" 
+                variant="h6"
+              >
                 Already have an account? Sign in
               </Link>
             </Grid>
           </Grid>
         </form>
       </div>
-      <Box mt={5}>
-        <Copyright />
-      </Box>
     </Container>
   );
 }
