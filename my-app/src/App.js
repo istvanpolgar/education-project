@@ -8,24 +8,22 @@ import {
 import './App.css';
 
 import Homepage from './components/Homepage/Homepage';
-import Header from './components/Header/Header';
+import Page from './components/Page/Page';
 import Navbar from './components/Navbar/Navbar';
-
+import Logout from './components/Logout/Logout';
 import useToken from './components/UseToken/useToken';
+
 
 function App() {
   const { token, setToken } = useToken();
 
-  console.log(token);
-
-  function logOut() {
-    setToken('');
-    window.location.href='/';
-  }
+  console.log('Token: ', token);
 
   if(!token) {
     return (
-      <Homepage setToken={ setToken }/>
+      <Homepage 
+        token = { token }
+        setToken={ setToken }/>
     )
   }
 
@@ -35,11 +33,14 @@ function App() {
         <Switch>
           <Route path="/page">
             <Navbar />
-            <Header />
-            
+            <Page 
+              token = { token }
+              setToken = { setToken } />
           </Route>
           <Route path="/logout">
-            {logOut}
+            <Logout
+              token = { token }
+              setToken={ setToken }/>
           </Route>
         </Switch>
       </Router>

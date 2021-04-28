@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const firebase = require('firebase');
-const randtoken = require('rand-token');
 const Joi = require('./node_modules/joi');
+const jwt = require('jsonwebtoken');
+
 require('firebase-admin');
 
 const port = 8080;
@@ -21,6 +22,8 @@ firebase.initializeApp({
 
 const admin = firebase.auth();
 const database = firebase.database();
+const refreshTokenSecret = 'thisisatokensecret';
+let refreshTokens = [];
 
 const Schema = Joi.object({
   fname: Joi.string().min(3).max(128).required(),
@@ -30,6 +33,22 @@ const Schema = Joi.object({
   conf_password: Joi.string().valid(Joi.ref('password')).required(),
   teacher: Joi.boolean()
 })
+
+const authenticateJWT = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+      const token = authHeader.split(' ')[1];
+      jwt.verify(token, refreshTokenSecret, (err, user) => {
+        if (err) {
+            return res.json({code: 403, message: "Token is wrong in JWT!"});
+        }
+        req.user = user;
+        next();
+      });
+  } else {
+    res.json({code: 403, message: "Token is missing in JWT!"});
+  }
+};
 
 app.use(cors());
 
@@ -44,16 +63,45 @@ app.use(function (req, res, next) {
 app.use(express.urlencoded({extended: true})); 
 app.use(express.json());
 
+app.post('/page', authenticateJWT, async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+      return res.json({code: 401, message: "Token is missing in /token!"});;
+  }
+
+  if (!refreshTokens.includes(token)) {
+      return res.json({code: 403, message: "Token is wrong in /token 1!"});
+  }
+
+  await jwt.verify(token, refreshTokenSecret, (err, user) => {
+      if (err) {
+          return res.json({code: 403, message: "Token is wrong in /token 2!"});
+      }
+      res.json({
+          "token": token
+      });
+  });
+});
+
 app.post('/login', async (req, res) => {
   try{
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email, password } = req.body;
 
     await admin.signInWithEmailAndPassword(email, password)
-    .then(() => {
-      const token = randtoken.generate(16);
+    .then( async () => {
+      const accessToken = jwt.sign({ 
+          email: email,  
+          password: password
+        }, 
+        refreshTokenSecret,
+        { expiresIn: '60s' }
+      );
+
+      refreshTokens.push(accessToken);
+      
       res.send({
-        "token": token
+        "token": accessToken
       });
     })
     .catch((error) => {
@@ -106,6 +154,13 @@ app.post('/regist', async (req, res) => {
   } catch (e) {
     res.send({code: 400, message: "All fields are required!"});
   }
+});
+
+app.post('/logout', (req, res) => {
+  const { token } = req.body;
+  refreshTokens = refreshTokens.filter(t => t !== token)
+
+  res.json({code: 100, message: "Logged out!"});
 });
 
 app.listen(port, () => {

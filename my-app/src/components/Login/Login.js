@@ -65,9 +65,11 @@ export default function Login({ setToken }) {
     }
 
     const token = await loginUser(data);
+    
     if(token.code)
       setMessage(token.message);
-    else{
+    if(token.token)
+    {
       setToken(token);
       window.location.href='/page';
     }
