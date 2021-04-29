@@ -1,4 +1,4 @@
-const Joi = require('../../node_modules/joi');
+const Joi = require('joi');
 
 const Schema = Joi.object({
     fname: Joi.string().min(3).max(128).required(),
@@ -6,5 +6,7 @@ const Schema = Joi.object({
     email: Joi.string().email().min(8).max(256).required(),
     password: Joi.string().min(3).max(128).required(),
     conf_password: Joi.string().valid(Joi.ref('password')).required(),
-    teacher: Joi.boolean().required()
+    teacher: Joi.boolean()
 })
+
+module.exports = Schema;

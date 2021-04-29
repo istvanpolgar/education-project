@@ -7,7 +7,8 @@ import {
 
 import './App.css';
 
-import Homepage from './components/Homepage/Homepage';
+import Login from './components/Login/Login';
+import Registration from './components/Registration/Registration';
 import Page from './components/Page/Page';
 import Navbar from './components/Navbar/Navbar';
 import Logout from './components/Logout/Logout';
@@ -18,32 +19,33 @@ function App() {
   const { token, setToken } = useToken();
 
   console.log('Token: ', token);
-
-  if(!token) {
-    return (
-      <Homepage 
-        token = { token }
-        setToken={ setToken }/>
-    )
-  }
-
+  
   return(
     <div className="App">
-      <Router>
-        <Switch>
-          <Route path="/page">
+        <Router>
             <Navbar />
-            <Page 
-              token = { token }
-              setToken = { setToken } />
-          </Route>
-          <Route path="/logout">
-            <Logout
-              token = { token }
-              setToken={ setToken }/>
-          </Route>
-        </Switch>
-      </Router>
+            <Switch>
+                <Route exact path="/">
+                    <div>First page</div>
+                </Route>
+                <Route path="/page">
+                    <Page 
+                        token = { token }
+                        setToken = { setToken } />
+                </Route>
+                <Route path="/login">
+                    <Login setToken={ setToken }/>
+                </Route>
+                <Route path="/signup">
+                    <Registration />
+                </Route>
+                <Route path="/logout">
+                    <Logout 
+                        token = { token }
+                        setToken={ setToken }/>
+                </Route>
+            </Switch>
+        </Router>
     </div>
   );
 }

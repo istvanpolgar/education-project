@@ -45,7 +45,7 @@ export default function Homepage(){
         <Router>
             <Switch>
                 <Route exact path="/">
-                    <AppBar position="static">
+                    <AppBar position="static" color="inherit">
                         <Toolbar>
                             <IconButton 
                                 edge="start" 
@@ -77,7 +77,7 @@ export default function Homepage(){
                     </AppBar>
                 </Route>
                 <Route path="/login">
-                    <AppBar position="static">
+                    <AppBar position="static" color="inherit">
                         <Toolbar>
                             <IconButton 
                                 edge="start" 
@@ -103,7 +103,7 @@ export default function Homepage(){
                     </AppBar>
                 </Route>
                 <Route path="/signup">
-                    <AppBar position="static">
+                    <AppBar position="static" color="inherit">
                         <Toolbar>
                             <IconButton 
                                 edge="start" 
@@ -129,7 +129,7 @@ export default function Homepage(){
                     </AppBar>
                 </Route>
                 <Route path="/page">
-                    <AppBar position="static">
+                    <AppBar position="static"  color="inherit">
                         <Toolbar>
                             <IconButton 
                                 edge="start" 

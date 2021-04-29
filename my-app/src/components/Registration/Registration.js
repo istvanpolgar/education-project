@@ -2,52 +2,18 @@ import React, { useState } from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Paper';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Switch from '@material-ui/core/Switch';
+import Checkbox from '@material-ui/core/Checkbox';
 
-const url = 'http://localhost:8080';
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.primary.grey,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-    backgroundColor: 'grey',
-  },
-}));
-
-async function signUpUser(credentials) {
-  return fetch(url + '/regist', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(credentials)
-  })
-    .then(data => data.json())
-    .catch((error) => {
-      console.error('Error:', error);
-    });
-}
+import { fechFunction }  from '../../functions/fetch';
+import { useStyles } from '../../styles/registStyle';
 
 export default function Registration() {  
   const [fname, setFName] = useState();
@@ -74,7 +40,7 @@ export default function Registration() {
       "teacher": teacher
     }
 
-    const reg = await signUpUser(data);
+    const reg = await fechFunction(data, '/regist');
     if(reg.code)
       setMessage(reg.message);
     else
@@ -82,130 +48,141 @@ export default function Registration() {
   }
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Grid 
+      container 
+      component="main" 
+      className={classes.root}>
       <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign Up
-        </Typography>
-        <form 
-          onSubmit={handleSubmit}
-          className={classes.form} 
-          noValidate
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                autoComplete="fname"
-                name="firstName"
-                onChange={e => setFName(e.target.value)}
-                variant="outlined"
-                required
-                fullWidth
-                id="firstName"
-                label="First Name"
-                autoFocus
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="lastName"
-                label="Last Name"
-                name="lastName"
-                onChange={e => setLName(e.target.value)}
-                autoComplete="lname"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                onChange={e => setEmail(e.target.value)}
-                autoComplete="email"
-              />
-            </Grid>
-            <Grid item xs={12}  sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                onChange={e => setPassword(e.target.value)}
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="conf_password"
-                onChange={e => setConfPassword(e.target.value)}
-                label="Confirm password"
-                type="password"
-                id="conf_password"
-                autoComplete="current-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-            <Typography component="div">
-              <Grid 
-                component="label" 
-                container 
-                alignItems="center" 
-                spacing={1}>
-                <Grid item>Student</Grid>
-                <Grid item>
-                  <Switch 
-                    onChange={e => setTeacher(true)} 
-                    />
-                </Grid>
-                <Grid item>Teacher</Grid>
-              </Grid>
-            </Typography>
-            </Grid>
-          </Grid>
-          <Typography 
-            variant="caption" 
-            display="block"
-            color="error"
-          >
-            {message}
-          </Typography>
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
+        <Grid 
+          item 
+          xs={false} 
+          sm={4} 
+          md={7} 
+          className={classes.image} />
+        <Grid 
+          item 
+          xs={12} 
+          sm={8} 
+          md={5} 
+          component={Paper} 
+          elevation={6} 
+          square>
+          <div className={classes.paper}>
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
             Sign Up
-          </Button>
-          <Grid container justify="flex-end">
-            <Grid item>
-              <Link 
-                href="/login" 
-                variant="h6"
-              >
-                Already have an account? Sign in
-              </Link>
+          </Typography>
+          <form 
+            onSubmit={handleSubmit}
+            className={classes.form} 
+            noValidate
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="fname"
+                  name="firstName"
+                  onChange={e => setFName(e.target.value)}
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  onChange={e => setLName(e.target.value)}
+                  autoComplete="lname"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  onChange={e => setEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}  sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="password"
+                  onChange={e => setPassword(e.target.value)}
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  variant="outlined"
+                  required
+                  fullWidth
+                  name="conf_password"
+                  onChange={e => setConfPassword(e.target.value)}
+                  label="Confirm password"
+                  type="password"
+                  id="conf_password"
+                  autoComplete="current-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Checkbox 
+                      color="default"          
+                      onChange={e => setTeacher(e.target.checked)} 
+                    />
+                    }
+                  label="I am a teacher"
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </form>
-      </div>
-    </Container>
+            <Typography 
+              variant="caption" 
+              display="block"
+              color="error"
+            >
+              {message}
+            </Typography>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              className={classes.submit}
+            >
+              Sign Up
+            </Button>
+            <Grid container justify="flex-end">
+              <Grid item>
+                <Link 
+                  href="/login" 
+                  variant="h6"
+                >
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </form>
+        </div>
+      </Grid>
+    </Grid>
   );
 }
