@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { fechFunction }  from '../../functions/fetch';
+import { fetchFunction }  from '../../functions/fetch';
 
 export default function Logout(props) {
   const handleFunc = async (props) =>
@@ -10,7 +10,7 @@ export default function Logout(props) {
       'token': props.token
     }
     
-    const response = await fechFunction(data, '/logout');
+    const response = await fetchFunction(data, '/logout');
 
     if(response.code){
       props.setToken('');

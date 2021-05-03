@@ -11,7 +11,7 @@ import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 
-import { fechFunction }  from '../../functions/fetch';
+import { fetchFunction }  from '../../functions/fetch';
 import { useStyles } from '../../styles/loginStyle';
 
 export default function Login({ setToken }) {
@@ -29,7 +29,7 @@ export default function Login({ setToken }) {
       "password": password
     }
 
-    const token = await fechFunction(data, '/login');
+    const token = await fetchFunction(data, '/login');
     
     if(token.code)
       setMessage(token.message);

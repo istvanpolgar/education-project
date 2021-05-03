@@ -61,7 +61,7 @@ app.post('/login', async (req, res) => {
             password: password
           }, 
           refreshTokenSecret,
-          { expiresIn: '60s' }
+          { expiresIn: '1h' }
         );
 
         refreshTokens.push(accessToken);
@@ -130,6 +130,31 @@ app.post('/logout', (req, res) => {
   refreshTokens = refreshTokens.filter(t => t !== token)
 
   res.json({code: 100, message: "Logged out!"});
+});
+
+app.post('/exercises', (req, res) => {
+  res.send(
+  {
+    'exercises': [
+    {
+      'title': 'Elsőfokú egyenlet',
+      'tips': [
+        { 'name': 'Alapegyenlet' },
+        { 'name': 'Visszavezethető' },
+        { 'name': 'Moduluszos' },
+        { 'name': 'Egészrészes' }
+      ]
+    },
+    {
+      'title': 'Másodfokú egyenlet',
+      'tips': [
+        { 'name': 'Alapegyenlet' },
+        { 'name': 'Visszavezethető' },
+        { 'name': 'Viéte-képletek' },
+        { 'name': 'Paraméteres' }
+      ] 
+    }
+  ]})
 });
 
 app.listen(port, () => {

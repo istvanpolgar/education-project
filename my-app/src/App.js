@@ -20,34 +20,55 @@ function App() {
 
   console.log('Token: ', token);
   
-  return(
-    <div className="App">
-        <Router>
-            <Navbar />
-            <Switch>
-                <Route exact path="/">
-                    <div>First page</div>
-                </Route>
-                <Route path="/page">
-                    <Page 
-                        token = { token }
-                        setToken = { setToken } />
-                </Route>
-                <Route path="/login">
-                    <Login setToken={ setToken }/>
-                </Route>
-                <Route path="/signup">
-                    <Registration />
-                </Route>
-                <Route path="/logout">
-                    <Logout 
-                        token = { token }
-                        setToken={ setToken }/>
-                </Route>
-            </Switch>
-        </Router>
-    </div>
-  );
+  if(!token)
+    return(
+        <div className="App">
+            <Router>
+                <Navbar />
+                <Switch>
+                    <Route path="/login">
+                        <Login setToken={ setToken }/>
+                    </Route>
+                    <Route path="/signup">
+                        <Registration />
+                    </Route>
+                    <Route path="/logout">
+                        <Logout 
+                            token = { token }
+                            setToken={ setToken }/>
+                    </Route>
+                    <Route path="/">
+                        <div>First page</div>
+                    </Route>
+                </Switch>
+            </Router>
+        </div>
+    );
+    else
+        return(
+            <div className="App">
+                <Router>
+                    <Navbar />
+                    <Switch>
+                        <Route path="/page">
+                            <Page 
+                                token = { token }
+                                setToken = { setToken } />
+                        </Route>
+                        <Route path="/logout">
+                            <Logout 
+                                token = { token }
+                                setToken={ setToken }/>
+                        </Route>
+                        <Route path="/">
+                            <Page 
+                                token = { token }
+                                setToken = { setToken } />
+                        </Route>
+                    </Switch>
+                </Router>
+            </div>
+        );
 }
 
 export default App;

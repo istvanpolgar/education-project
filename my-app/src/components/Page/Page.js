@@ -1,19 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import { fechFunction }  from '../../functions/fetch';
+import Fab from '@material-ui/core/Fab';
+import Container from '@material-ui/core/Container';
+import Grid from '@material-ui/core/Grid';
+import AddIcon from '@material-ui/icons/Add';
+
+import { useStyles } from '../../styles/pageStyle';
+import { fetchFunction }  from '../../functions/fetch';
+import Exercises from '../Exercises/Exercises';
 
 export default function Page(props) {
-  const handleFunc = async (props) =>
-  {
+  const [ exercises, setExercises ] = useState([0]);
+  const classes = useStyles();
 
+  const handleFunc = async () =>
+  {
     const data = {
       'token': props.token
     }
 
-    const token = await fechFunction(data, '/page');
-
-    console.log('Page token: ', token);
+    const token = await fetchFunction(data, '/page');
 
     if(token.token)
       props.setToken(token);
@@ -25,9 +32,30 @@ export default function Page(props) {
 
   handleFunc(props);
 
-  return(
-    <div>
-      <h1>Almaaaaaaaaaaaaaaaaaa</h1>
+  console.log('ex: ', exercises);
+
+  return (
+    <div className={classes.root}>
+      <Container>
+        <Grid container component="main" >
+        { exercises.map((exercise) => 
+            <Exercises 
+              token={props.token}
+              value={exercise}
+              key={exercise}
+            />
+        )}
+        </Grid>
+        <Fab
+          component="button"
+          className={classes.submit}
+          onClick={ () => (
+            setExercises([ ...exercises, exercises.length ])
+          )}
+        >
+          <AddIcon /> 
+        </Fab>
+      </Container>
     </div>
   )
 }

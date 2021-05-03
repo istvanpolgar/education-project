@@ -12,7 +12,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Typography from '@material-ui/core/Typography';
 import Checkbox from '@material-ui/core/Checkbox';
 
-import { fechFunction }  from '../../functions/fetch';
+import { fetchFunction }  from '../../functions/fetch';
 import { useStyles } from '../../styles/registStyle';
 
 export default function Registration() {  
@@ -40,7 +40,7 @@ export default function Registration() {
       "teacher": teacher
     }
 
-    const reg = await fechFunction(data, '/regist');
+    const reg = await fetchFunction(data, '/regist');
     if(reg.code)
       setMessage(reg.message);
     else

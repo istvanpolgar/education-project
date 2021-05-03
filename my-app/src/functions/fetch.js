@@ -1,6 +1,6 @@
 const url = 'http://localhost:8080';
 
-export const fechFunction = async (credentials, endpoint) => {
+export const fetchFunction = async (credentials, endpoint) => {
     return fetch(url + endpoint, {
       method: 'POST',
       headers: {
