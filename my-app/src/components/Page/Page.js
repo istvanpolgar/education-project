@@ -1,17 +1,27 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Fab from '@material-ui/core/Fab';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import AddIcon from '@material-ui/icons/Add';
+import { 
+  Fab, 
+  Grid, 
+  Avatar,
+  Typography
+} from '@material-ui/core';
+
+import {
+  Add,
+  FindInPage,
+  Send
+} from '@material-ui/icons';
 
 import { useStyles } from '../../styles/pageStyle';
 import { fetchFunction }  from '../../functions/fetch';
 import Exercises from '../Exercises/Exercises';
 
 export default function Page(props) {
-  const [ exercises, setExercises ] = useState([0]);
+  const [ inputs, setInput ] = useState([]);
+  const [ exercises, setExercise ] = useState([]);
+  const [ exNrs, setExNr ] = useState([]);
   const classes = useStyles();
 
   const handleFunc = async () =>
@@ -30,32 +40,99 @@ export default function Page(props) {
     }
   }
 
-  handleFunc(props);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  console.log('ex: ', exercises);
+    console.log(e.target);
+  }
+
+  const handleCallback = (data) => {
+    if(!data.cancel)
+    {
+      setExercise(exercises => {
+        exercises[data.value] = data.exercise;
+        return exercises ;
+      });
+      setExNr(exNrs => {
+        exNrs[data.value] = data.nr;
+        return exNrs ;
+      });
+    } 
+    else
+    {
+      setInput( (inputs) => {
+        const i = inputs.filter(ex => ex !== data.value);
+        return i;
+      });
+      setExercise( (exercises) => {
+        const e = exercises.filter(ex => ex !== data.exercise);
+        return e;
+      });
+      setExNr( (exNrs) => { 
+        const n = exNrs.splice(data.value, 1); 
+        return n;
+      });
+    }
+    console.log('exercises: ',exercises);
+    console.log('nr: ',exNrs);  
+  }
+
+  handleFunc(props);
 
   return (
     <div className={classes.root}>
-      <Container>
-        <Grid container component="main" >
-        { exercises.map((exercise) => 
-            <Exercises 
-              token={props.token}
-              value={exercise}
-              key={exercise}
-            />
-        )}
+      <Grid container component="main" >
+        <Grid container spacing={2}>
+          <Grid item xs={2} sm={1}>
+            <Avatar className={classes.avatar}>
+              <FindInPage fontSize="large" />
+            </Avatar>
+          </Grid>
+          <Grid item>
+            <Typography 
+              className={classes.title}
+              component="h1" 
+              variant="h4"
+            >
+              Choose the exercises for your test
+            </Typography>
+          </Grid>
         </Grid>
-        <Fab
-          component="button"
-          className={classes.submit}
-          onClick={ () => (
-            setExercises([ ...exercises, exercises.length ])
-          )}
-        >
-          <AddIcon /> 
-        </Fab>
-      </Container>
+        <form 
+          className={classes.formControl}
+          noValidate>
+            { inputs.map((nr) => 
+                <Exercises 
+                  token={props.token}
+                  value={nr}
+                  key={nr}
+                  parentCallback = {handleCallback}
+                />
+            )}
+        </form>
+        <Grid container spacing={2}>
+          <Grid item>
+            <Fab
+              component="button"
+              className={classes.submit}
+              onClick={ () => (
+                setInput([ ...inputs, inputs.length ])
+              )}
+            >
+              <Add /> 
+            </Fab>
+          </Grid>
+          <Grid item>
+            <Fab
+              component="button"
+              className={classes.submit}
+              onClick={handleSubmit}
+            >
+              <Send /> 
+            </Fab>
+          </Grid>
+        </Grid>
+      </Grid>
     </div>
   )
 }

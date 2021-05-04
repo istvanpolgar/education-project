@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
-import Avatar from '@material-ui/core/Avatar';
-import Paper from '@material-ui/core/Paper';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import {
+  Avatar,
+  Paper,
+  Button,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  Typography
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
 
-import { fetchFunction }  from '../../functions/fetch';
 import { useStyles } from '../../styles/loginStyle';
+import { fetchFunction } from '../../functions/fetch';
 
 export default function Login({ setToken }) {
   const [email, setEmail] = useState();

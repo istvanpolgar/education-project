@@ -1,66 +1,100 @@
 import { useEffect, useState } from 'react';
-import InputLabel from '@material-ui/core/InputLabel';
-import { 
-    FormControl,  
+
+import {  
+    FormControl,
+    InputLabel,
     TextField, 
     Select,
-    Grid 
+    Grid,
+    Fab 
 } from '@material-ui/core';
+
+import {
+    Cancel
+  } from '@material-ui/icons';
+
 import { fetchFunction } from '../../functions/fetch';
 
 import { useStyles } from '../../styles/pageStyle';
 
 export default function Exercises( props ) {
-    const [ exercises, setExercises ] = useState();
+    const [ selectValues, setSelectValues ] = useState();
+    const [ exercise, setExercise ] = useState();
+    const [ nr, setNr ] = useState();
+    const [ cancel, setCancel ] = useState(false);
     const classes = useStyles();
 
-    const getExercises = async (props) => {
+    const clickCheck = () => {
+        setCancel(!cancel);
+    }
+
+    const onTrigger = () => {
+        const data = {
+            'exercise': exercise,
+            'nr': nr,
+            'cancel': cancel,
+            'value': props.value
+        }
+        props.parentCallback(data);
+    }
+
+    const getSelectValues = async (props) => {
         const data = {
             'token': props.token
         }
 
         const e = await fetchFunction(data, '/exercises');
-        setExercises(e);
+        setSelectValues(e);
     }       
 
-    useEffect(()=>{getExercises(props)},[]);
+    useEffect(()=>{getSelectValues(props)},[]);
+    useEffect(()=>{ onTrigger() },[exercise, nr, cancel]);
 
-    if(!exercises)
+    if(!selectValues)
         return <div> Oupsssss!!!! </div>;
     return(
-        <div>
-            <FormControl 
-                className={classes.formControl}>
-            <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                    <InputLabel 
-                    htmlFor="grouped-native-select">
-                        Feladattípusok
-                    </InputLabel>
-                    <Select 
-                    native 
-                    defaultValue="" 
-                    id="grouped-native-select">
-                    <option aria-label="None" value="" />
-                    { exercises.exercises.map((exTip,i) => (
-                        <optgroup key={i} label={exTip.title}> 
-                        {
-                            exTip.tips.map((ex,i) => (
-                            <option key={i} value={i}>{ex.name}</option>
-                        ))}
-                        </optgroup>
-                    ))}
-                    </Select>
+        <>
+            <FormControl>
+                <Grid container spacing={3}>
+                    <Grid item>
+                        <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
+                        <Select 
+                            native 
+                            onChange={e => setExercise(e.target.value)}
+                            defaultValue=""
+                            id="ex_group">
+                            <option aria-label="None" value="" />
+                            { selectValues.exercises.map((exTip,i) => (
+                                <optgroup key={i} label={exTip.title}> 
+                                {
+                                    exTip.tips.map((ex,j) => (
+                                    <option key={j} value={i*10+j}>{ex.name}</option>
+                                ))}
+                                </optgroup>
+                            ))}
+                        </Select>
+                    </Grid>
+                    <Grid item>
+                        <TextField
+                            id="ex_nr"
+                            onChange={e => setNr(e.target.value)}
+                            label="Number"
+                            type="number"
+                            inputProps= {{ min:0, max:100 }}
+                        />
+                    </Grid>
+                    <Grid item>
+                        <Fab
+                            component="button"
+                            className={classes.submit}
+                            onClick={clickCheck}
+                            size="small"
+                        >
+                            <Cancel /> 
+                        </Fab>
+                    </Grid>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField
-                    id="standard-number"
-                    label="Number"
-                    type="number"
-                    />
-                </Grid>
-            </Grid>
             </FormControl>
-        </div>
+        </>
     )
 }
