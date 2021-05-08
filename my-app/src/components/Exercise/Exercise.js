@@ -19,23 +19,27 @@ import { useStyles } from '../../styles/pageStyle';
 
 export default function Exercises( props ) {
     const [ selectValues, setSelectValues ] = useState();
-    const [ exercise, setExercise ] = useState();
-    const [ nr, setNr ] = useState();
-    const [ cancel, setCancel ] = useState(false);
+    const [ exercise, setExercise ] = useState({ input: props.value, title: -1, nr: 0 });
     const classes = useStyles();
 
-    const clickCheck = () => {
-        setCancel(!cancel);
+    const handleChange = e => {
+        e.persist();
+        setExercise(prevExercise => (
+            { ...prevExercise, [e.target.name]: e.target.value 
+        }));
     }
 
     const onTrigger = () => {
         const data = {
-            'exercise': exercise,
-            'nr': nr,
-            'cancel': cancel,
-            'value': props.value
+            'input': props.value,
+            'title': exercise.title,
+            'nr': exercise.nr,
         }
         props.parentCallback(data);
+    }
+
+    const onClick = () => {
+        props.handleDelete(props.value);
     }
 
     const getSelectValues = async (props) => {
@@ -47,8 +51,8 @@ export default function Exercises( props ) {
         setSelectValues(e);
     }       
 
-    useEffect(()=>{getSelectValues(props)},[]);
-    useEffect(()=>{ onTrigger() },[exercise, nr, cancel]);
+    useEffect(()=>{ getSelectValues(props) },[]);
+    useEffect(()=>{ onTrigger() }, [exercise] );
 
     if(!selectValues)
         return <div> Oupsssss!!!! </div>;
@@ -60,8 +64,9 @@ export default function Exercises( props ) {
                         <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
                         <Select 
                             native 
-                            onChange={e => setExercise(e.target.value)}
-                            defaultValue=""
+                            onChange={handleChange}
+                            name="title"
+                            value={exercise.title}
                             id="ex_group">
                             <option aria-label="None" value="" />
                             { selectValues.exercises.map((exTip,i) => (
@@ -77,9 +82,11 @@ export default function Exercises( props ) {
                     <Grid item>
                         <TextField
                             id="ex_nr"
-                            onChange={e => setNr(e.target.value)}
+                            onChange={handleChange}
                             label="Number"
                             type="number"
+                            name="nr"
+                            value={exercise.nr}
                             inputProps= {{ min:0, max:100 }}
                         />
                     </Grid>
@@ -87,7 +94,7 @@ export default function Exercises( props ) {
                         <Fab
                             component="button"
                             className={classes.submit}
-                            onClick={clickCheck}
+                            onClick={onClick}
                             size="small"
                         >
                             <Cancel /> 

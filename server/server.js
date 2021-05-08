@@ -157,6 +157,21 @@ app.post('/exercises', (req, res) => {
   ]})
 });
 
+app.post('/generate', async (req, res) => {
+  const { exercise, props } = req.body;
+
+  console.log('exercises: ', exercise);
+    console.log('props: ', props);
+
+  await registSchema.validateAsync(req.body)
+  .then( () => {
+    res.send('OK');
+  })
+  .catch((error) => {
+    res.send({code: 400, message: error.message});
+  });
+});
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
