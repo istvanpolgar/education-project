@@ -9,19 +9,33 @@ import {
   TextField,
   Link,
   Grid,
-  Typography
+  Typography,
+  Snackbar,
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import { useStyles } from '../../styles/loginStyle';
 import { fetchFunction } from '../../functions/fetch';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function Login({ setToken }) {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [message, setMessage] = useState();
+  const [open, setOpen] = useState();
 
   const classes = useStyles();
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -34,7 +48,10 @@ export default function Login({ setToken }) {
     const token = await fetchFunction(data, '/login');
     
     if(token.code)
+    {
       setMessage(token.message);
+      setOpen(true);
+    }
     if(token.token)
     {
       setToken(token);
@@ -101,13 +118,9 @@ export default function Login({ setToken }) {
               id="password"
               autoComplete="current-password"
             />
-            <Typography 
-              variant="caption" 
-              display="block"
-              color="error"
-            >
-              {message}
-            </Typography>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error"> {message} </Alert>
+            </Snackbar>
             <Button
               type="submit"
               fullWidth

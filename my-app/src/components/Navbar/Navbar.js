@@ -44,38 +44,6 @@ export default function Homepage(){
         <div className={classes.root}>
         <Router>
             <Switch>
-                <Route exact path="/">
-                    <AppBar position="static" color="inherit">
-                        <Toolbar>
-                            <IconButton 
-                                edge="start" 
-                                className={classes.menuButton} 
-                                color="inherit" 
-                                aria-label="menu"
-                            >
-                                <MenuIcon />
-                            </IconButton>
-                            <Typography 
-                                variant="h6" 
-                                className={classes.title}
-                            >
-                                News
-                            </Typography>
-                            <Button 
-                                color="inherit"
-                                onClick={handleLoginRoute}
-                            >
-                                Login
-                            </Button>
-                            <Button 
-                                color="inherit"
-                                onClick={handleSignUpRoute}
-                            >
-                                Sign Up
-                            </Button>
-                        </Toolbar>
-                    </AppBar>
-                </Route>
                 <Route path="/login">
                     <AppBar position="static" color="inherit">
                         <Toolbar>
@@ -150,6 +118,38 @@ export default function Homepage(){
                                 onClick={handleLogoutRoute}
                             >
                                 Logout
+                            </Button>
+                        </Toolbar>
+                    </AppBar>
+                </Route>
+                <Route exact path="/">
+                    <AppBar position="static" color="inherit">
+                        <Toolbar>
+                            <IconButton 
+                                edge="start" 
+                                className={classes.menuButton} 
+                                color="inherit" 
+                                aria-label="menu"
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                            <Typography 
+                                variant="h6" 
+                                className={classes.title}
+                            >
+                                News
+                            </Typography>
+                            <Button 
+                                color="inherit"
+                                onClick={handleLoginRoute}
+                            >
+                                Login
+                            </Button>
+                            <Button 
+                                color="inherit"
+                                onClick={handleSignUpRoute}
+                            >
+                                Sign Up
                             </Button>
                         </Toolbar>
                     </AppBar>

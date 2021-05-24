@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const registSchema = require('./src/configs/registValidation');
 const loginSchema = require('./src/configs/loginValidation');
 const authenticateJWT = require('./src/configs/authenticateJWT');
+const createTxt = require('./src/configs/createTxt');
 
 const firebase = require('firebase');
 require('firebase-admin');
@@ -158,17 +159,29 @@ app.post('/exercises', (req, res) => {
 });
 
 app.post('/generate', async (req, res) => {
-  const { exercise, props } = req.body;
+  const { token, exercises, params } = req.body;
 
-  console.log('exercises: ', exercise);
-    console.log('props: ', props);
+  if (!token) {
+    return res.json({code: 401, message: "Token is missing in /token!"});;
+  }
 
-  await registSchema.validateAsync(req.body)
-  .then( () => {
-    res.send('OK');
-  })
-  .catch((error) => {
-    res.send({code: 400, message: error.message});
+  if (!refreshTokens.includes(token)) {
+    return res.json({code: 403, message: "Token is wrong in /token 1!"});
+  }
+
+  await jwt.verify(token, refreshTokenSecret, async (err, user) =>  {
+    if (err) {
+        return res.json({code: 403, message: "Token is wrong in /token 2!"});
+    }
+
+    const ex = JSON.parse(exercises);
+    const par = JSON.parse(params);
+
+    await createTxt(ex, par);
+
+    res.json({
+        "token": token
+    });
   });
 });
 

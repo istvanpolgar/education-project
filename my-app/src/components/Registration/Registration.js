@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import Paper from '@material-ui/core/Paper';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import { 
+  Avatar,
+  Button,
+  Paper,
+  CssBaseline,
+  TextField,
+  Link,
+  Grid,
+  FormControlLabel,
+  Typography,
+  Checkbox,
+  Snackbar
+} from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Typography from '@material-ui/core/Typography';
-import Checkbox from '@material-ui/core/Checkbox';
+import MuiAlert from '@material-ui/lab/Alert';
 
 import { fetchFunction }  from '../../functions/fetch';
 import { useStyles } from '../../styles/registStyle';
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function Registration() {  
   const [fname, setFName] = useState();
@@ -23,8 +31,16 @@ export default function Registration() {
   const [conf_password, setConfPassword] = useState();
   const [teacher, setTeacher] = useState();
   const [message, setMessage] = useState();
+  const [open, setOpen] = useState();
 
   const classes = useStyles();
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -42,7 +58,10 @@ export default function Registration() {
 
     const reg = await fetchFunction(data, '/regist');
     if(reg.code)
+    {
       setMessage(reg.message);
+      setOpen(true);
+    }
     else
       window.location.href='/login';
   }
@@ -155,13 +174,9 @@ export default function Registration() {
                 />
               </Grid>
             </Grid>
-            <Typography 
-              variant="caption" 
-              display="block"
-              color="error"
-            >
-              {message}
-            </Typography>
+            <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+              <Alert onClose={handleClose} severity="error"> {message} </Alert>
+            </Snackbar>
             <Button
               type="submit"
               fullWidth

@@ -50,16 +50,16 @@ export default function Page( props ) {
     e.preventDefault();
     const data = {
       'token': props.token,
-      'exercises': exercises,
-      'params': params
+      'exercises': JSON.stringify(exercises, ['input', 'title', 'nr']),
+      'params': JSON.stringify(params, ['title', 'class', 'description', 'date', 'begin', 'end'])
     }
 
     const res = await fetchFunction(data, '/generate');
 
-    if(res)
-      console.log('OK');
+    if(res.token)
+      console.log('token: ', res.token);
     else{
-      console.log('NOT OK');
+      console.log('message: ', res.message);
     }
   }
 
