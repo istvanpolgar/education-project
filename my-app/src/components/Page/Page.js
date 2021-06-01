@@ -1,24 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-
-import { 
-  Fab, 
-  Grid, 
-  Typography
-} from '@material-ui/core';
-
-import {
-  Add,
-  Send
-} from '@material-ui/icons';
 
 import { useStyles } from '../../styles/pageStyle';
 import { fetchFunction }  from '../../functions/fetch';
-import Exercise from '../Exercise/Exercise';
-import FormElement from '../FormElement/FormElement';
+import StepperBase from '../Steppers/Stepper';
+import Stepper1 from '../Steppers/Stepper1';
+import Stepper2 from '../Steppers/Stepper2';
+import Stepper3 from '../Steppers/Stepper3';
 
 export default function Page( props ) {
-  const [ exercises, setExercises ] = useState([{input: 0, title: -1, nr: 0}]);
+  const [ categories, setCategories ] = useState([{id: 0, title: ''}]);
+  const [ selectableCategories, setSelectableCategories ] = useState([]);
+  
+  const [ exercises, setExercises ] = useState(
+    [{
+      id: 0, 
+      category: '', 
+      title: '', 
+      nr: 0
+  }]);
+  const [ selectableExercises, setSelectableExercises ] = useState([]);
+  const [ activeStep, setActiveStep ] = useState(0);
+
   const [ params, setParams ] = useState({
     title: '', 
     class: '', 
@@ -30,12 +33,11 @@ export default function Page( props ) {
   
   const classes = useStyles();
 
-  const handleFunc = async () =>
-  {
+  const getCategoriesAndExercises = async () => {
     const data = {
-      'token': props.token
+        'token': props.token
     }
-
+    
     const token = await fetchFunction(data, '/page');
 
     if(token.token)
@@ -43,14 +45,37 @@ export default function Page( props ) {
     else{
       props.setToken('');
       window.location.href='/';
-    }
-  }
+    }  
+    
+    const e = await fetchFunction(data, '/exercises');
+
+    setSelectableCategories( e.exercises.map(cat => {
+      return cat.title;
+    }));
+
+    setSelectableExercises( e.exercises );
+
+  } 
+
+  useEffect(()=>{ getCategoriesAndExercises() },[]);
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleReset = () => {
+    setActiveStep(0);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = {
       'token': props.token,
-      'exercises': JSON.stringify(exercises, ['input', 'title', 'nr']),
+      'exercises': JSON.stringify(exercises, ['id', 'category', 'title', 'nr']),
       'params': JSON.stringify(params, ['title', 'class', 'description', 'date', 'begin', 'end'])
     }
 
@@ -63,120 +88,126 @@ export default function Page( props ) {
     }
   }
 
-  const handleDelete = (input) => {
-    const exs = exercises.filter( ex => ex.input !== input );
-    setExercises(exs);
-  }
-
-  const handleCallback2 = (data) => {
-    setParams( prevParams => (
-      { ...params, [data.name]: data.value 
-    }));
-  }
-
-  const handleCallback = (data) => {
+  const handleExerciseChange = (id, category, title, nr) => {
     let new_exercises = [];
     exercises.forEach( ex => { 
-      if( ex.input === data.input ) {
-        new_exercises.push({ ...ex , title: data.title, nr: data.nr });
+      if( ex.id === id ) {
+        new_exercises.push({ ...ex , category: category, title: title, nr: nr });
       } else
         new_exercises.push(ex);
     })
     setExercises(new_exercises);
   }
 
-  handleFunc(props);
+  const handleExerciseDelete = (id) => {
+    const exs = exercises.filter( ex => ex.id !== id );
+    if(exs.length)
+      setExercises(exs);
+    else
+      setExercises([{
+        id: 0, 
+        category: '', 
+        title: '', 
+        nr: 0
+    }]);
+  }
+
+  const handleAddExercise = () => { 
+    setExercises( prevEx =>
+        [...prevEx, {
+            id: prevEx.pop().id + 1,
+            category: '',
+            title: '',
+            nr: 0
+  }]);
+  }
+
+  const handleCategoryChange = (id, title) => {
+    let new_categories = [];
+    categories.forEach( cat => { 
+      if( cat.id === id ) {
+        new_categories.push({ ...cat , title: title});
+      } else
+        new_categories.push(cat);
+    })
+    setCategories(new_categories);
+
+    let newCat = selectableCategories.filter( cat => cat !== title );
+    setSelectableCategories(newCat);
+  }
+
+  const handleCategoryDelete = (id) => {
+    const newCat = categories.find( cat => cat.id === id);
+    if(newCat.title)
+      setSelectableCategories([...selectableCategories, newCat.title]);
+    const cats = categories.filter( cat => cat.id !== id );
+    if(cats.length)
+      setCategories(cats);
+    else
+      setCategories([{id: 0, title: ''}]);
+  }
+
+  const handleAddCategory = () => { 
+    setCategories( prevCat =>
+        [...prevCat, {
+            id: prevCat.pop().id + 1,
+            title: ''
+  }]);
+  }
+
+  const handlePropsCallback = (data) => {
+    setParams( prevParams => (
+      { ...prevParams, [data.name]: data.value 
+    }));
+  }
 
   return (
     <div className={classes.container}>
-      <Typography 
-        component="h1" 
-        variant="h4"
-      >
-        Please complete the test properties
-      </Typography>
-      <Grid container component="main" >
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <FormElement 
-              title='Test title: ' label='Title' id='title'
-              parentCallback={handleCallback2}
-            />
-            <FormElement 
-              title='Class: ' label='Class' id='class'
-              parentCallback={handleCallback2}
-            />
-            <FormElement 
-              title='Description: ' label='Description' id='description'
-              parentCallback={handleCallback2}
-            />
-            <FormElement 
-              title='Date: ' label='Date' id='date' type='date'
-              parentCallback={handleCallback2}
-            />
-            <FormElement 
-              title='Begining: ' label='Begin' id='begin' type='time'
-              parentCallback={handleCallback2}
-            />
-            <FormElement 
-              title='Ending: ' label='End' id='end' type='time'
-              parentCallback={handleCallback2}
-            />
-          </Grid>
-          <Grid item  xs={12} sm={6}>
-            <Grid container>
-              <Grid item>
-                <Typography 
-                  component="h1" 
-                  variant="h5"
-                >
-                  Choose the exercises for your test
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid item>
-              { exercises.map((ex) => 
-                  <Exercise 
-                    token={props.token}
-                    value={ex.input}
-                    key={ex.input}
-                    parentCallback={handleCallback}
-                    handleDelete={handleDelete}
-                  />
-              )}
-            </Grid>
-            <Grid container spacing={2}>
-              <Grid item>
-                <Fab
-                  component="button"
-                  className={classes.submit}
-                  onClick={ () => { setExercises( prevEx => 
-                    [...prevEx, {
-                      input: prevEx.length,
-                      title: -1,
-                      nr: 0
-                    }])
-                  }}
-                >
-                  <Add /> 
-                </Fab>
-              </Grid>
-              <Grid item>
-                <Fab
-                  component="button"
-                  className={classes.submit}
-                  onClick={handleSubmit}
-                >
-                  <Send /> 
-                </Fab>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-    </div>
-  )
-}
+      <StepperBase
+        activeStep={activeStep}
+      />
+      <div>
+      {
+        activeStep === 0 ? (
+          <Stepper1 
+            activeStep={activeStep}
+            categories={categories}
+            selectableCategories={selectableCategories}
+            handleChange={handleCategoryChange}
+            handleDelete={handleCategoryDelete}
+            handleAdd={handleAddCategory}
+            handleNext={handleNext}
+          />
+        ) : (
+        activeStep === 1 ? (
+          <Stepper2 
+            activeStep={activeStep}
+            exercises={exercises}
+            selectableExercises={selectableExercises}
+            categories={categories}
+            selectableCategories={selectableCategories}
+            handleChange={handleExerciseChange}
+            handleDelete={handleExerciseDelete}
+            handleAdd={handleAddExercise}
+            handleNext={handleNext}
+            handleBack={handleBack}
+            handleNext={handleNext}
+          />
+        ) : (
+          <Stepper3
+            categories={categories}
+            token={props.token}
+            activeStep={activeStep}
+            parentCallback={handlePropsCallback}
+            handleBack={handleBack}
+            handleReset={handleReset}
+            handleSubmit={handleSubmit}
+          />
+        ))
+      }
+      </div>
+  </div>
+)}
 
 Page.propTypes = {
     setToken: PropTypes.func.isRequired

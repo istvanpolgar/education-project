@@ -10,4 +10,7 @@ export const useStyles = makeStyles((theme) => ({
     submit: {
       margin: theme.spacing(2),
     },
+    button: {
+      marginRight: theme.spacing(1),
+    },
   }));
