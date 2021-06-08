@@ -5,7 +5,7 @@ import {
 } from '@material-ui/core';
 
 function getSteps() {
-    return ['Select category', 'Select exercises', 'Set test properties'];
+    return ['Select categories for your test', 'Select exercises for your test', 'Set test properties', 'Finish your test'];
 }
 
 export default function StepperBase( props ) {

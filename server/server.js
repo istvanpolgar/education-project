@@ -128,7 +128,7 @@ app.post('/regist', async (req, res) => {
 
 app.post('/logout', (req, res) => {
   const { token } = req.body;
-  refreshTokens = refreshTokens.filter(t => t !== token)
+  refreshTokens = refreshTokens.filter(t => t !== token);
 
   res.json({code: 100, message: "Logged out!"});
 });

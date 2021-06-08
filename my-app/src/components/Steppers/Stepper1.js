@@ -20,16 +20,6 @@ export default function Stepper1( props ) {
         <div>
             <Grid container component="main" >
                 <Grid item  xs={12} sm={6}>
-                    <Grid container>
-                        <Grid item>
-                        <Typography 
-                            component="h1" 
-                            variant="h5"
-                        >
-                            Choose the categories for your test
-                        </Typography>
-                        </Grid>
-                    </Grid>
                     <Grid item>
                         {   
                             props.categories.map( (cat) => 

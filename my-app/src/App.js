@@ -1,4 +1,4 @@
-import React from 'react';
+import { React, useEffect } from 'react';
 import { 
   BrowserRouter as Router, 
   Switch,
@@ -17,6 +17,10 @@ import useToken from './components/UseToken/useToken';
 
 function App() {
   const { token, setToken } = useToken();
+
+    useEffect(() => {
+        
+    })
 
   console.log('Token: ', token);
   

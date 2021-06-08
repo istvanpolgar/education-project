@@ -7,6 +7,7 @@ import StepperBase from '../Steppers/Stepper';
 import Stepper1 from '../Steppers/Stepper1';
 import Stepper2 from '../Steppers/Stepper2';
 import Stepper3 from '../Steppers/Stepper3';
+import Stepper4 from '../Steppers/Stepper4';
 
 export default function Page( props ) {
   const [ categories, setCategories ] = useState([{id: 0, title: ''}]);
@@ -69,10 +70,20 @@ export default function Page( props ) {
 
   const handleReset = () => {
     setActiveStep(0);
+    setCategories([{id: 0, title: ''}]);
+    setExercises([{id: 0, category: '', title: '', nr: 0}]);
+    setParams({
+      title: '', 
+      class: '', 
+      description: '',
+      date: '',
+      begin:'',
+      end: ''
+    });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    console.log(params);
     const data = {
       'token': props.token,
       'exercises': JSON.stringify(exercises, ['id', 'category', 'title', 'nr']),
@@ -88,12 +99,21 @@ export default function Page( props ) {
     }
   }
 
-  const handleExerciseChange = (id, category, title, nr) => {
+  const handleExerciseChange = (id, data) => {
     let new_exercises = [];
     exercises.forEach( ex => { 
       if( ex.id === id ) {
-        new_exercises.push({ ...ex , category: category, title: title, nr: nr });
-      } else
+        if(data.title)
+          new_exercises.push({ ...ex ,
+            category: data.category,
+            title: data.title
+          });
+        if(data.nr)
+          new_exercises.push({ ...ex , 
+            nr: data.nr 
+          });
+      }
+      else
         new_exercises.push(ex);
     })
     setExercises(new_exercises);
@@ -155,7 +175,7 @@ export default function Page( props ) {
   }]);
   }
 
-  const handlePropsCallback = (data) => {
+  const handlePropsChange = (data) => {
     setParams( prevParams => (
       { ...prevParams, [data.name]: data.value 
     }));
@@ -189,21 +209,27 @@ export default function Page( props ) {
             handleChange={handleExerciseChange}
             handleDelete={handleExerciseDelete}
             handleAdd={handleAddExercise}
-            handleNext={handleNext}
             handleBack={handleBack}
             handleNext={handleNext}
           />
         ) : (
+        activeStep === 2 ? (
           <Stepper3
-            categories={categories}
-            token={props.token}
             activeStep={activeStep}
-            parentCallback={handlePropsCallback}
+            handleChange={handlePropsChange}
+            handleNext={handleNext}
+            handleBack={handleBack}
+          />
+        ) : (
+          <Stepper4
+            categories={categories}
+            activeStep={activeStep}
+            handleNext={handleNext}
             handleBack={handleBack}
             handleReset={handleReset}
             handleSubmit={handleSubmit}
           />
-        ))
+        )))
       }
       </div>
   </div>

@@ -22,11 +22,30 @@ export default function Exercises( props ) {
         props.handleDelete(props.value);
     }   
 
-    let activeExercises = [...props.exercises];
+    const onChange = e => {
+        e.persist();
+        if(e.target.name === "title")
+            props.handleChange(props.value, {title: e.target.value, category: activeCategories[e.target.selectedIndex]});
+        if(e.target.name === "nr")
+            props.handleChange(props.value, {nr : e.target.value});
+    }
+
+    let deletableExercises = [...props.exercises];
     props.categories.map( (cat) => {
+        deletableExercises = deletableExercises.filter(ex => ex.title === cat.title);
+    });
+
+    let activeExercises = [...props.exercises];
+    deletableExercises.map( (cat) => {
         activeExercises = activeExercises.filter(ex => ex.title === cat.title);
     });
-    console.log(activeExercises);
+
+    let activeCategories = [];
+    activeExercises.map((cat) => {
+        cat.tips.map(()=> {
+            activeCategories.push(cat.title);
+        });      
+    });
 
     if(!props.exercises)
         return <div> Oupsssss!!!! </div>;
@@ -38,10 +57,7 @@ export default function Exercises( props ) {
                         <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
                         <Select 
                             native 
-                            onChange={
-                                e => { 
-                                    props.handleChange(props.value, e.target.value);
-                            }}
+                            onChange={onChange}
                             name="title"
                             value={props.title}
                             id="ex_group"
@@ -63,10 +79,7 @@ export default function Exercises( props ) {
                     <Grid item>
                         <TextField
                             id="ex_nr"
-                            onChange={
-                                e => { 
-                                    props.handleChange(props.value, e.target.value);
-                            }}
+                            onChange={onChange}
                             label="Number"
                             type="number"
                             name="nr"

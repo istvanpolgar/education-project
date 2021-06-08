@@ -2,12 +2,12 @@ const { exec } = require('child_process');
 fs = require('fs');
 
 const createTxt = (exercises, params) => {
+    console.log(params);
     const PDFextention = ".pdf";
     const TEXextention = ".tex";
     const fileName = "Feladatlap";
     const latexPath = "src\\latex\\pdflatex.exe";
-    const text = "This is a LateX file!";
-    let  txt = "";
+    let text = "";
     const header = "\\documentclass[12pt]{article}\n" + 
     "\\usepackage{color}\n" +
     "\\usepackage{amsmath, geometry}\n" +
@@ -43,19 +43,23 @@ const createTxt = (exercises, params) => {
     "\\begin{document}\n\n";
     const footer = "\n\n\\end{document}\n";
 
+    console.log(exercises);
+
+    exercises.map( ex => {
+        text = text + ex.category + "\n";
+        text = text + ex.title + ": " + ex.nr + "\n\n";
+    });
+
     txt = header + text + footer;
 
-    console.log("Writing... ");
     fs.writeFile( "./src/files/" + fileName + TEXextention, txt, 
     function (err) {
         if (err) 
             return console.log(err);
     });
 
-    console.log("Executing...");
     exec( latexPath + " -output-directory=src\\files " +  " src\\files\\" + fileName + TEXextention, 
     (error, stdout, stderr) => {
-        console.log("In execution...");
         if (error) {
             console.log(`error: ${error.message}`);
             return;
