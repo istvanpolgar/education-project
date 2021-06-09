@@ -1,4 +1,5 @@
 const { exec } = require('child_process');
+const generated_exercise = require('./exercises/category_1');
 fs = require('fs');
 
 const createTxt = (exercises, params) => {
@@ -46,8 +47,8 @@ const createTxt = (exercises, params) => {
     console.log(exercises);
 
     exercises.map( ex => {
-        text = text + ex.category + "\n";
-        text = text + ex.title + ": " + ex.nr + "\n\n";
+        for(let i=1;i<=ex.nr;i++)
+            text = text + generated_exercise(1);
     });
 
     txt = header + text + footer;
