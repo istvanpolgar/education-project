@@ -169,7 +169,7 @@ app.post('/generate', async (req, res) => {
     return res.json({code: 403, message: "Token is wrong in /token 1!"});
   }
 
-  await jwt.verify(token, refreshTokenSecret, async (err, user) =>  {
+  await jwt.verify(token, refreshTokenSecret, (err, user) =>  {
     if (err) {
         return res.json({code: 403, message: "Token is wrong in /token 2!"});
     }
@@ -177,7 +177,7 @@ app.post('/generate', async (req, res) => {
     const ex = JSON.parse(exercises);
     const par = JSON.parse(params);
 
-    await createTxt(ex, par);
+    createTxt(ex, par, token);
 
     res.json({
         "token": token

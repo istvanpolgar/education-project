@@ -22,7 +22,7 @@ export default function FormElement( props ) {
             <Typography
               className={classes.datetext} 
               component="h1" 
-              variant="h5"
+              variant="h6"
             >
               {props.title}
             </Typography>
@@ -45,30 +45,60 @@ export default function FormElement( props ) {
       </>
     )
   else
-    return(
-      <>
-        <Grid container>
-          <Grid item>
-            <Typography 
-              className={classes.text}
-              component="h1" 
-              variant="h5"
-            >
-              {props.title}
-            </Typography>
+    if(props.type == "number")
+      return(
+        <>
+          <Grid container>
+            <Grid item>
+              <Typography
+                className={classes.datetext} 
+                component="h1" 
+                variant="h6"
+              >
+                {props.title}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <TextField
+                className={classes.input}
+                required
+                id={props.id}
+                label={props.label}
+                name={props.id}
+                type={props.type}
+                autoComplete={props.label}
+                inputProps= {{ min:0, max:100 }}
+                onChange={e=>{props.handleChange(e.target)}}
+              />
+            </Grid>
           </Grid>
-          <Grid item>
-            <TextField
-              className={classes.input}
-              required
-              id={props.id}
-              label={props.label}
-              name={props.id}
-              autoComplete={props.label}
-              onChange={e=>{props.handleChange(e.target)}}
-            />
+        </>
+      )
+    else
+      return(
+        <>
+          <Grid container>
+            <Grid item>
+              <Typography 
+                className={classes.text}
+                component="h1" 
+                variant="h6"
+              >
+                {props.title}
+              </Typography>
+            </Grid>
+            <Grid item>
+              <TextField
+                className={classes.input}
+                required
+                id={props.id}
+                label={props.label}
+                name={props.id}
+                autoComplete={props.label}
+                onChange={e=>{props.handleChange(e.target)}}
+              />
+            </Grid>
           </Grid>
-        </Grid>
-      </>
-    )
+        </>
+      )
 }

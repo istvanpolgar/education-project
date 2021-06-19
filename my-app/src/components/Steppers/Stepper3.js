@@ -14,6 +14,13 @@ export default function Stepper3( props ) {
             <Grid container component="main" >
                 <Grid item xs={12} sm={6}>
                 <FormElement 
+                    title='Number of tests: ' 
+                    label='Number' 
+                    id='number'
+                    type='number'
+                    handleChange={props.handleChange}
+                />
+                <FormElement 
                     title='Test title: ' 
                     label='Title' 
                     id='title'

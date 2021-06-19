@@ -24,6 +24,7 @@ export default function Page( props ) {
   const [ activeStep, setActiveStep ] = useState(0);
 
   const [ params, setParams ] = useState({
+    number: '',
     title: '', 
     class: '', 
     description: '',
@@ -87,7 +88,7 @@ export default function Page( props ) {
     const data = {
       'token': props.token,
       'exercises': JSON.stringify(exercises, ['id', 'category', 'title', 'nr']),
-      'params': JSON.stringify(params, ['title', 'class', 'description', 'date', 'begin', 'end'])
+      'params': JSON.stringify(params, ['number', 'title', 'class', 'description', 'date', 'begin', 'end'])
     }
 
     const res = await fetchFunction(data, '/generate');
