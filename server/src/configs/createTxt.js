@@ -8,20 +8,20 @@ const generateTest = (path, filename, extention, text) => {
     fs.writeFileSync(".\\" + path + "\\" + filename + extention, text, 
     (err) => {
         if (err) 
-            return console.log(err);
+            return err;
     });
 
     execSync( "pdflatex.exe -output-directory=" + path + " " + path + "\\" + filename + extention, 
     (error, stderr) => {
         if (error) {
             console.log(`error: ${error.message}`);
-            return;
+            return error.message;
         }
         if (stderr) {
             console.log(`stderr: ${stderr}`);
-            return;
+            return stderr;
         }
-    }); 
+    });
 }
 
 const createFolder = (dirName) => {
@@ -32,11 +32,11 @@ const createFolder = (dirName) => {
 
 const removeFolder = (dirName) => {
     if (fs.existsSync(dirName)){
-        fs.rmdirSync(dirName, { recursive: true });
+        fs.rmSync(dirName, { recursive: true });
     }
 }
 
-const zipFiles = (root, dir, zipName) => {
+const zipFiles = async (root, dir, zipName) => {
     let archive = archiver("zip", { zlib: { level: 9 } });
     let output = fs.createWriteStream(root + zipName);
     
@@ -44,21 +44,17 @@ const zipFiles = (root, dir, zipName) => {
         if (err) throw err;
     });
 
-    archive.pipe(output);
-    archive.glob('*.pdf', {cwd: root + dir});
-    archive.finalize();
+    await archive.pipe(output);
+    await archive.glob('*.pdf', {cwd: root + dir});
+    await archive.finalize();
+    removeFolder("./src/files/" + dir);
 }
 
 const createTxt = (exercises, params, token) => {
-    const PDFextention = ".pdf";
     const TEXextention = ".tex";
     const fileName1 = "Feladatlap";
     const fileName2 = "Megoldókulcs";
-    let zipName;
-    if(params.title) 
-        zipName = params.title + "_" + token + '.zip';
-    else
-        zipName = token + '.zip';
+    let zipName = token + '.zip';
     let question_text = "";
     let answer_text = "";
 
@@ -109,12 +105,8 @@ const createTxt = (exercises, params, token) => {
                     "Leírás: " + `${params.description}\n}\n` + 
                     "\\end{description}\n\n";
     }
-                    
 
     const footer = "\n\n\\end{document}\n";
-
-    console.log(params);
-    console.log(exercises);
 
     exercises.map( ex => {
         let a = "";
@@ -140,7 +132,6 @@ const createTxt = (exercises, params, token) => {
     }
 
     zipFiles("./src/files/", token, zipName);
-    removeFolder("./src/files/" + token);
 }
 
 module.exports = createTxt;

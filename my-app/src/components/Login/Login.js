@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-
+import { 
+  React, 
+  useState 
+} from 'react';
 import {
   Avatar,
   Paper,
@@ -14,9 +15,9 @@ import {
 } from '@material-ui/core';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import MuiAlert from '@material-ui/lab/Alert';
-
-import { useStyles } from '../../styles/loginStyle';
-import { fetchFunction } from '../../functions/fetch';
+import { useStyles } from '../../styles/loginregStyle';
+import { useHistory } from 'react-router-dom';
+import { handleFetch } from '../../functions/handleFetch';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -29,6 +30,7 @@ export default function Login({ setToken }) {
   const [open, setOpen] = useState();
 
   const classes = useStyles();
+  const history = useHistory();
 
   const handleClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -45,7 +47,7 @@ export default function Login({ setToken }) {
       "password": password
     }
 
-    const token = await fetchFunction(data, '/login');
+    const token = await handleFetch(data, '/login', 'POST', 'application/json');
     
     if(token.code)
     {
@@ -55,7 +57,7 @@ export default function Login({ setToken }) {
     if(token.token)
     {
       setToken(token);
-      window.location.href='/page';
+      history.push('/page');
     }
   }
 
@@ -143,9 +145,4 @@ export default function Login({ setToken }) {
         </div>
       </Grid>
     </Grid>
-  )
-}
-
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired
-}
+)}

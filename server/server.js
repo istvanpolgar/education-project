@@ -3,12 +3,14 @@ const app = express();
 
 const cors = require('cors');
 const setHeaders = require('./src/configs/setHeader');
+let fs = require('fs');
 
 const jwt = require('jsonwebtoken');
 const registSchema = require('./src/configs/registValidation');
 const loginSchema = require('./src/configs/loginValidation');
 const authenticateJWT = require('./src/configs/authenticateJWT');
 const createTxt = require('./src/configs/createTxt');
+const deleteZip = require('./src/configs/deleteZip');
 
 const firebase = require('firebase');
 require('firebase-admin');
@@ -25,7 +27,7 @@ app.use(cors());
 
 app.use(setHeaders);
 
-app.use(express.urlencoded({extended: true})); 
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 app.post('/page', authenticateJWT, async (req, res) => {
@@ -62,7 +64,7 @@ app.post('/login', async (req, res) => {
             password: password
           }, 
           refreshTokenSecret,
-          { expiresIn: '1h' }
+          { expiresIn: '2h' }
         );
 
         refreshTokens.push(accessToken);
@@ -185,6 +187,27 @@ app.post('/generate', async (req, res) => {
   });
 });
 
+app.get('/download', async (req, res) => {
+  const token = req.headers.authorization.replace('Bearer ','');
+  const file = './src/files/' + token + '.zip';
+
+  if (!token) {
+    return res.json({code: 401, message: "Token is missing in /token!"});;
+  }
+
+  if (!refreshTokens.includes(token)) {
+    return res.json({code: 403, message: "Token is wrong in /token 1!"});
+  }
+
+  await jwt.verify(token, refreshTokenSecret, (err) =>  {
+    if (err) {
+        return res.json({code: 403, message: "Token is wrong in /token 2!"});
+    }
+    res.download(file);
+    setTimeout(() => deleteZip(file), 0);
+  });
+});
+
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
+  console.log(`Education app listening at http://localhost:${port}`);
 })

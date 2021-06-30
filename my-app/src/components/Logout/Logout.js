@@ -1,30 +1,25 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
 
-import { fetchFunction }  from '../../functions/fetch';
+import { handleFetch }  from '../../functions/handleFetch';
 
 export default function Logout(props) {
+  const history = useHistory();
   const handleFunc = async (props) =>
   {
     const data = {
       'token': props.token
     }
     
-    const response = await fetchFunction(data, '/logout');
+    const response = await handleFetch(data, '/logout', 'POST', 'application/json');
 
     if(response.code){
       props.setToken('');
-      window.location.href='/';
+      history.push('/');
     }
   }
 
   handleFunc(props);
 
-  return(
-    <></>
-  )
-}
-
-Logout.propTypes = {
-    setToken: PropTypes.func.isRequired
+  return( <></> )
 }

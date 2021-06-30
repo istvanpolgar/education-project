@@ -1,5 +1,3 @@
-import { useEffect, useState } from 'react';
-
 import {  
     FormControl,
     InputLabel,
@@ -8,11 +6,9 @@ import {
     Grid,
     Fab 
 } from '@material-ui/core';
-
 import {
     Cancel
 } from '@material-ui/icons';
-
 import { useStyles } from '../../styles/pageStyle';
 
 export default function Exercises( props ) {
@@ -47,58 +43,56 @@ export default function Exercises( props ) {
         });      
     });
 
-    if(!props.exercises)
-        return <div> Oupsssss!!!! </div>;
-    return(
-        <>
-            <FormControl>
-                <Grid container spacing={3}>
-                    <Grid item>
-                        <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
-                        <Select 
-                            native 
-                            onChange={onChange}
-                            name="title"
-                            value={props.title}
-                            id="ex_group"
-                        >
-                            <option aria-label="None" value="" />
-                            {
-                                activeExercises.map((exTip,i) => (
-                                    <optgroup key={i} label={exTip.title}> 
-                                    {
-                                        exTip.tips.map((ex,j) => (
-                                            <option key={i*10+j} value={ex.name}>{ex.name}</option>
-                                        ))
-                                    }
-                                    </optgroup>
-                                ))
-                            } 
-                        </Select>
+    if(props.exercises){
+        return(
+            <>
+                <FormControl>
+                    <Grid container spacing={3}>
+                        <Grid item>
+                            <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
+                            <Select 
+                                native 
+                                onChange={onChange}
+                                name="title"
+                                value={props.title}
+                                id="ex_group"
+                            >
+                                <option aria-label="None" value="" />
+                                {
+                                    activeExercises.map((exTip,i) => (
+                                        <optgroup key={i} label={exTip.title}> 
+                                        {
+                                            exTip.tips.map((ex,j) => (
+                                                <option key={i*10+j} value={ex.name}>{ex.name}</option>
+                                            ))
+                                        }
+                                        </optgroup>
+                                    ))
+                                } 
+                            </Select>
+                        </Grid>
+                        <Grid item>
+                            <TextField
+                                id="ex_nr"
+                                onChange={onChange}
+                                label="Number"
+                                type="number"
+                                name="nr"
+                                value={props.nr}
+                                inputProps= {{ min:0, max:100 }}
+                            />
+                        </Grid>
+                        <Grid item>
+                            <Fab
+                                component="button"
+                                className={classes.submit}
+                                onClick={onClick}
+                                size="small"
+                            >
+                                <Cancel /> 
+                            </Fab>
+                        </Grid>
                     </Grid>
-                    <Grid item>
-                        <TextField
-                            id="ex_nr"
-                            onChange={onChange}
-                            label="Number"
-                            type="number"
-                            name="nr"
-                            value={props.nr}
-                            inputProps= {{ min:0, max:100 }}
-                        />
-                    </Grid>
-                    <Grid item>
-                        <Fab
-                            component="button"
-                            className={classes.submit}
-                            onClick={onClick}
-                            size="small"
-                        >
-                            <Cancel /> 
-                        </Fab>
-                    </Grid>
-                </Grid>
-            </FormControl>
-        </>
-    )
-}
+                </FormControl>
+            </>
+)}}

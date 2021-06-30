@@ -1,8 +1,7 @@
 import { 
     Button,
     Fab,
-    Grid, 
-    Typography 
+    Grid
 } from "@material-ui/core";
 
 import Category from "../Category/Category";

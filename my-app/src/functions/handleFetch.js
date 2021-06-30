@@ -1,16 +1,16 @@
 const url = 'http://localhost:8080';
 
-export const fetchFunction = async (credentials, endpoint) => {
-    return fetch(url + endpoint, {
-      method: 'POST',
+export const handleFetch = async (credentials, endpoint, method, content_type) => {  
+  return await fetch(url + endpoint, {
+      method: method,
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': content_type,
         'Authorization': `Bearer ${credentials.token}` 
       },
       body: JSON.stringify(credentials)
     })
     .then(data => data.json())
     .catch((error) => {
-    console.error('Error:', error);
+      console.error('Error:', error);
     });
 }

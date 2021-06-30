@@ -1,11 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Akaya+Telivigala&family=Roboto&display=swap');
+
 body {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    /*background-image: url('pictures/theme.gif');
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center; 
-    background-size: cover;*/
+    font-family: 'Akaya Telivigala', cursive;
 }

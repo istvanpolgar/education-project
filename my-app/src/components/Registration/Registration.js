@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-
+import { 
+  React, 
+  useState 
+} from 'react';
+import { useHistory } from 'react-router-dom';
 import { 
   Avatar,
   Button,
@@ -13,12 +16,10 @@ import {
   Checkbox,
   Snackbar
 } from '@material-ui/core';
-
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import MuiAlert from '@material-ui/lab/Alert';
-
-import { fetchFunction }  from '../../functions/fetch';
-import { useStyles } from '../../styles/registStyle';
+import { handleFetch }  from '../../functions/handleFetch';
+import { useStyles } from '../../styles/loginregStyle';
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -35,8 +36,9 @@ export default function Registration() {
   const [open, setOpen] = useState();
 
   const classes = useStyles();
+  const history = useHistory();
 
-  const handleClose = (event, reason) => {
+  const handleClose = (reason) => {
     if (reason === 'clickaway') {
       return;
     }
@@ -57,14 +59,15 @@ export default function Registration() {
       "teacher": teacher
     }
 
-    const reg = await fetchFunction(data, '/regist');
+    const reg = await handleFetch(data, '/regist', 'POST', 'application/json');
+    
     if(reg.code)
     {
       setMessage(reg.message);
       setOpen(true);
     }
     else
-      window.location.href='/login';
+      history.push('/login');
   }
 
   return (
@@ -200,5 +203,4 @@ export default function Registration() {
         </div>
       </Grid>
     </Grid>
-  );
-}
+)}

@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-
+import {
+  React,  
+  useEffect, 
+  useState 
+} from 'react';
+import ReactLoading from "react-loading";
+import { useHistory } from 'react-router-dom';
+import { 
+  Typography,
+} from '@material-ui/core';
 import { useStyles } from '../../styles/pageStyle';
-import { fetchFunction }  from '../../functions/fetch';
-import StepperBase from '../Steppers/Stepper';
+import { handleFetch } from '../../functions/handleFetch';
+import StepperBase from '../Steppers/Stepper'; 
 import Stepper1 from '../Steppers/Stepper1';
 import Stepper2 from '../Steppers/Stepper2';
 import Stepper3 from '../Steppers/Stepper3';
-import Stepper4 from '../Steppers/Stepper4';
+import Stepper4 from '../Steppers/Stepper4'; 
 
 export default function Page( props ) {
   const [ categories, setCategories ] = useState([{id: 0, title: ''}]);
@@ -22,6 +29,7 @@ export default function Page( props ) {
   }]);
   const [ selectableExercises, setSelectableExercises ] = useState([]);
   const [ activeStep, setActiveStep ] = useState(0);
+  const [ ok, setOk] = useState();
 
   const [ params, setParams ] = useState({
     number: '',
@@ -34,13 +42,14 @@ export default function Page( props ) {
   });
   
   const classes = useStyles();
+  const history = useHistory();
 
   const getCategoriesAndExercises = async () => {
     const data = {
         'token': props.token
     }
     
-    const token = await fetchFunction(data, '/page');
+    const token = await handleFetch(data, '/page', 'POST', 'application/json');
 
     if(token.token)
       props.setToken(token);
@@ -49,7 +58,7 @@ export default function Page( props ) {
       window.location.href='/';
     }  
     
-    const e = await fetchFunction(data, '/exercises');
+    const e = await handleFetch(data, '/exercises', 'POST', 'application/json');
 
     setSelectableCategories( e.exercises.map(cat => {
       return cat.title;
@@ -84,17 +93,20 @@ export default function Page( props ) {
   };
 
   const handleSubmit = async () => {
-    console.log(params);
     const data = {
       'token': props.token,
       'exercises': JSON.stringify(exercises, ['id', 'category', 'title', 'nr']),
       'params': JSON.stringify(params, ['number', 'title', 'class', 'description', 'date', 'begin', 'end'])
     }
-
-    const res = await fetchFunction(data, '/generate');
+    
+    setOk(false);
+    const res = await handleFetch(data, '/generate', 'POST', 'application/json');
 
     if(res.token)
-      console.log('token: ', res.token);
+    {
+      history.push('/download');
+      setOk(true);
+    }
     else{
       console.log('message: ', res.message);
     }
@@ -183,6 +195,19 @@ export default function Page( props ) {
   }
 
   return (
+    ok === false ? (
+      <div className={classes.container}>
+        <ReactLoading
+          type={"bars"}
+          color={"#0000FF"}
+          height={"30%"}
+          width={"30%"}
+        />
+        <Typography component="h1" variant="h5">
+            Tests are generating ...
+        </Typography>
+      </div>
+    ) : (
     <div className={classes.container}>
       <StepperBase
         activeStep={activeStep}
@@ -233,9 +258,5 @@ export default function Page( props ) {
         )))
       }
       </div>
-  </div>
-)}
-
-Page.propTypes = {
-    setToken: PropTypes.func.isRequired
-}
+    </div>
+))}
