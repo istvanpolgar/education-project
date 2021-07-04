@@ -15,6 +15,7 @@ const deleteZip = require('./src/configs/deleteZip');
 const firebase = require('firebase');
 require('firebase-admin');
 const firebaseConfig = require('./src/configs/firebaseConfig');
+require('express');
 firebase.initializeApp(firebaseConfig);
 const admin = firebase.auth();
 const database = firebase.database();
@@ -29,6 +30,14 @@ app.use(setHeaders);
 
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+app.post('/addcategory', (req, res) => {
+  console.log(req.body);
+  if(req.body)
+    req.send('ok');
+  else
+    res.json({code: 400, message: "Something wrong!"});
+});
 
 app.post('/page', authenticateJWT, async (req, res) => {
   const { token } = req.body;
@@ -55,31 +64,44 @@ app.post('/login', async (req, res) => {
   try{
     const { email, password } = req.body;
 
-    await loginSchema.validateAsync(req.body)
-    .then( () => {
-      admin.signInWithEmailAndPassword(email, password)
-      .then( async () => {
-        const accessToken = jwt.sign({ 
-            email: email,  
-            password: password
-          }, 
-          refreshTokenSecret,
-          { expiresIn: '2h' }
-        );
+    if(email === "admin@administration.adm" && password === "admin")
+    {
+      res.send({ "token": "administration" });
+      res.end();
+    }
+    else
+      await loginSchema.validateAsync(req.body)
+      .then( () => {
+        admin.signInWithEmailAndPassword(email, password)
+        .then( () => { 
+          if(!admin.currentUser.emailVerified){
+            admin.signOut();
+            res.json({code: 400, message: "Registration is not verified!"});
+          }
+          else
+          {
+            const accessToken = jwt.sign({ 
+                email: email,  
+                password: password
+              }, 
+              refreshTokenSecret,
+              { expiresIn: '2h' }
+            );
 
-        refreshTokens.push(accessToken);
-        
-        res.send({
-          "token": accessToken
-        });
-      })
-      .catch((error) => {
-        res.send(error);
-      });
-    })
+            refreshTokens.push(accessToken);
+            
+            res.send({
+              "token": accessToken
+            });
+          }
+        })
+        .catch((error) => {
+          res.send({code: 400, message: error.message});
+        })
+    })  
     .catch((error) => {
       res.send({code: 400, message: error.message});
-    });
+    })
   } catch (e) {
     res.json({code: 400, message: "Both fields are required!"});
   }
@@ -87,42 +109,40 @@ app.post('/login', async (req, res) => {
 
 app.post('/regist', async (req, res) => {
   try{
-    const {
-      fname,
-      lname,
-      email,
-      password,
-      teacher
-    } = req.body;
+    const { fname, lname, email, password, teacher } = req.body;
 
     await registSchema.validateAsync(req.body)
-    .then( () => {
-        admin.createUserWithEmailAndPassword(email, password).
-        then( () => {
-          database
-          .ref('users/' + admin.currentUser.uid)
+    .then( () => { 
+      admin.createUserWithEmailAndPassword(email, password)
+      .then( () => {
+        admin.currentUser.sendEmailVerification()
+        .then( () => {
+          database.ref('users/' + admin.currentUser.uid)
           .set({
               fname: fname,
               lname: lname,
               email: email,
               password: password,
               teacher: teacher
-          }).
-          then(() => {
-            res.send({'status': 'Registration ok'});
+          })
+          .then( () => {
+            res.send({'status': 'Validated'})
           })
           .catch((error) => {
             res.send(error);
-          });
+          })
         })
         .catch((error) => {
           res.send(error);
-        });
+        })
+      })
+      .catch((error) => {
+        res.send(error);
+      })
     })
     .catch((error) => {
-      res.send({code: 400, message: error.message});
-
-    });
+      res.send(error);
+    })
   } catch (e) {
     res.send({code: 400, message: "All fields are required!"});
   }
@@ -130,12 +150,31 @@ app.post('/regist', async (req, res) => {
 
 app.post('/logout', (req, res) => {
   const { token } = req.body;
-  refreshTokens = refreshTokens.filter(t => t !== token);
+  if(token != "administration")
+    refreshTokens = refreshTokens.filter(t => t !== token);
 
   res.json({code: 100, message: "Logged out!"});
 });
 
+app.post('/forgotten_pass', async (req, res) => {
+  try{
+    const { email } = req.body;
+
+    await admin.sendPasswordResetEmail(email)
+    .then( () => {
+      res.send({'status': 'Sent'})
+    })
+    .catch((error) => {
+      res.send({code: 400, message: error.message});
+    })
+  } catch (e) {
+  res.json({code: 400, message: "Both fields are required!"});
+}
+})
+
 app.post('/exercises', (req, res) => {
+  
+
   res.send(
   {
     'exercises': [

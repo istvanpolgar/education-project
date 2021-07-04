@@ -1,14 +1,14 @@
 import { 
-    Button,
     Fab,
     Grid, 
-    Typography 
 } from "@material-ui/core"
 
 import Exercises from "../Exercise/Exercise"
 
 import {
-    Add
+    Add,
+    ArrowForward,
+    ArrowBack
 } from '@material-ui/icons';
 
 import { useStyles } from '../../styles/pageStyle';
@@ -18,8 +18,13 @@ export default function Stepper2( props ) {
 
     return (
         <div>
-            <Grid container component="main" >
-                <Grid item  xs={12} sm={6}>
+            <Grid container direction="column">
+                <Grid 
+                    container
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="flex-end"
+                    >
                     <Grid item>
                     { 
                         props.exercises.map((ex) => 
@@ -35,36 +40,44 @@ export default function Stepper2( props ) {
                             />
                     )}
                     </Grid>
-                    <Grid container spacing={2}>
-                        <Grid item>
-                            <Fab
-                                component="button"
-                                className={classes.submit}
-                                onClick={props.handleAdd}
-                            >
-                            <Add /> 
-                            </Fab>
+                    <Grid item>
+                        <Grid
+                            container
+                            direction="column"
+                            justify="flex-end"
+                            alignItems="flex-start">
+                            <Grid item>
+                                <Fab
+                                    component="button"
+                                    className={classes.submit}
+                                    onClick={props.handleAdd}
+                                    size="small"
+                                >
+                                    <Add /> 
+                                </Fab>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>
+                <Grid item>
+                    <Fab
+                        component="button"
+                        onClick={props.handleBack} 
+                        className={classes.button}
+                        size="large"
+                    >
+                        <ArrowBack />
+                    </Fab>
+                    <Fab
+                        component="button"
+                        onClick={props.handleNext}
+                        className={classes.submit}
+                        size="large"
+                    >
+                        <ArrowForward /> 
+                    </Fab>
+                </Grid>
             </Grid>
-            <div>
-                <Button 
-                    disabled={props.activeStep === 0} 
-                    onClick={props.handleBack} 
-                    className={classes.button}
-                >
-                    Back
-                </Button>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={props.handleNext}
-                    className={classes.button}
-                >
-                    Next
-                </Button>
-            </div>
         </div>
     )
 }

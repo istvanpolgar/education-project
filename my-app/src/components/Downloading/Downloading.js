@@ -4,12 +4,14 @@ import {
 } from 'react';
 import { useHistory } from 'react-router-dom';
 import { 
-    Button,
     Typography,
     Grid,
+    Fab
 } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
-import { useStyles } from '../../styles/pageStyle';
+import {
+    GetApp,
+} from '@material-ui/icons';
+import { useStyles } from '../../styles/downloadStyle';
 import FormElement from '../FormElement/FormElement';
 
 export default function Downloading( props ) {
@@ -40,12 +42,17 @@ export default function Downloading( props ) {
     }
 
     return (
-        <div className={classes.paper}>
-            <Grid container>
+        <div className={classes.root}>
+            <Grid 
+                container
+                direction="column"  
+            >
                 <Grid item>
                     <Typography component="h1" variant="h5">
                         Please download your tests in a ZIP file
                     </Typography> 
+                </Grid>
+                <Grid item>
                     <FormElement 
                         title='Zip name: ' 
                         label='Zip name' 
@@ -53,16 +60,16 @@ export default function Downloading( props ) {
                         type='text'
                         handleChange={setZipName}
                     />
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        className={classes.button}
+                </Grid>
+                <Grid item>
+                    <Fab
+                        component="button"
                         onClick={handleClick}
-                        startIcon={<SaveIcon />}
+                        className={classes.submit}
+                        size="large"
                     >
-                        Save
-                    </Button>
+                        <GetApp /> 
+                    </Fab>
                 </Grid>
             </Grid>
         </div>

@@ -3,6 +3,8 @@ import Image from '../pictures/math.jpg';
 
 export const useStyles = makeStyles((theme) => ({
     root: {
+      marginTop: theme.spacing(5),
+      textAlign: 'center',
       height: '100vh',
     },
     paper: {
@@ -20,7 +22,7 @@ export const useStyles = makeStyles((theme) => ({
       backgroundPosition: 'center',
     },
     avatar: {
-      margin: theme.spacing(1),
+      margin: theme.spacing(2),
       backgroundColor: theme.palette.primary.grey,
     },
     form: {
@@ -29,5 +31,9 @@ export const useStyles = makeStyles((theme) => ({
     },
     submit: {
       margin: theme.spacing(3, 0, 2),
+    },
+    text: {
+      marginTop: theme.spacing(4),
+      marginBottom: theme.spacing(4),
     },
   }));

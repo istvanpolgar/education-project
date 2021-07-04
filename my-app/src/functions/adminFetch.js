@@ -3,7 +3,6 @@ export const handleFetch = async (credentials, endpoint, method, content_type) =
       method: method,
       headers: {
         'Content-Type': content_type,
-        'Authorization': `Bearer ${credentials.token}` 
       },
       body: JSON.stringify(credentials)
     })

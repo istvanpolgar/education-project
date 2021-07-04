@@ -47,18 +47,22 @@ export default function Login({ setToken }) {
       "password": password
     }
 
-    const token = await handleFetch(data, '/login', 'POST', 'application/json');
+    const res = await handleFetch(data, '/login', 'POST', 'application/json');
     
-    if(token.code)
+    if(res.code)
     {
-      setMessage(token.message);
+      setMessage(res.message);
       setOpen(true);
     }
-    if(token.token)
-    {
-      setToken(token);
-      history.push('/page');
-    }
+    else
+      if(res.token)
+      {
+        setToken(res);
+        if(res.token == "administration")
+          history.push('/admin');
+        else
+          history.push('/page');
+      }
   }
 
   return(
@@ -138,6 +142,17 @@ export default function Login({ setToken }) {
                   variant="h6"
                 >
                   {"Don't have an account? Sign Up"}
+                </Link>
+              </Grid>
+            </Grid>
+            <Grid container>
+              <Grid item>
+                <Link 
+                  href="/forgotten_pass" 
+                  variant="body2"
+                  color="primary"
+                >
+                  {"* I forgot my password"}
                 </Link>
               </Grid>
             </Grid>

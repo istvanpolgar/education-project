@@ -7,7 +7,9 @@ import ReactLoading from "react-loading";
 import { useHistory } from 'react-router-dom';
 import { 
   Typography,
+  Snackbar,
 } from '@material-ui/core';
+import MuiAlert from '@material-ui/lab/Alert';
 import { useStyles } from '../../styles/pageStyle';
 import { handleFetch } from '../../functions/handleFetch';
 import StepperBase from '../Steppers/Stepper'; 
@@ -15,6 +17,10 @@ import Stepper1 from '../Steppers/Stepper1';
 import Stepper2 from '../Steppers/Stepper2';
 import Stepper3 from '../Steppers/Stepper3';
 import Stepper4 from '../Steppers/Stepper4'; 
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function Page( props ) {
   const [ categories, setCategories ] = useState([{id: 0, title: ''}]);
@@ -40,7 +46,9 @@ export default function Page( props ) {
     begin:'',
     end: ''
   });
-  
+  const [message, setMessage] = useState();
+  const [open, setOpen] = useState();
+
   const classes = useStyles();
   const history = useHistory();
 
@@ -69,6 +77,13 @@ export default function Page( props ) {
   } 
 
   useEffect(()=>{ getCategoriesAndExercises() },[]);
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+        return;
+    }
+    setOpen(false);
+};
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -212,7 +227,7 @@ export default function Page( props ) {
       <StepperBase
         activeStep={activeStep}
       />
-      <div>
+      <div className={classes.body}>
       {
         activeStep === 0 ? (
           <Stepper1 
@@ -223,6 +238,8 @@ export default function Page( props ) {
             handleDelete={handleCategoryDelete}
             handleAdd={handleAddCategory}
             handleNext={handleNext}
+            setOk={setOk}
+            setMessage={setMessage}
           />
         ) : (
         activeStep === 1 ? (
@@ -237,6 +254,8 @@ export default function Page( props ) {
             handleAdd={handleAddExercise}
             handleBack={handleBack}
             handleNext={handleNext}
+            setOk={setOk}
+            setMessage={setMessage}
           />
         ) : (
         activeStep === 2 ? (
@@ -245,6 +264,8 @@ export default function Page( props ) {
             handleChange={handlePropsChange}
             handleNext={handleNext}
             handleBack={handleBack}
+            setOk={setOk}
+            setMessage={setMessage}
           />
         ) : (
           <Stepper4
@@ -254,9 +275,14 @@ export default function Page( props ) {
             handleBack={handleBack}
             handleReset={handleReset}
             handleSubmit={handleSubmit}
+            setOk={setOk}
+            setMessage={setMessage}
           />
         )))
       }
       </div>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+          <Alert onClose={handleClose} severity="error"> {message} </Alert>
+      </Snackbar>
     </div>
 ))}

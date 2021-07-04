@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 
 import {
-    Cancel
+    ClearRounded,
   } from '@material-ui/icons';
 
 import { useStyles } from '../../styles/pageStyle';
@@ -28,11 +28,16 @@ export default function Category( props ) {
         return(
             <div>
                 <FormControl>
-                    <Grid container spacing={2}>
+                    <Grid 
+                        container 
+                        direction="row" 
+                        spacing={2}
+                    >
                         <Grid item>
                             <InputLabel htmlFor="cat_group"> Category </InputLabel>
                             <Select 
                                 native 
+                                required
                                 name="title"
                                 value={props.title}
                                 id="cat_group"
@@ -52,7 +57,7 @@ export default function Category( props ) {
                                 onClick={onClick}
                                 size="small"
                             >
-                                <Cancel /> 
+                                <ClearRounded /> 
                             </Fab>
                         </Grid>
                     </Grid>

@@ -19,23 +19,38 @@ export default function FormElement( props ) {
   }
   return (
     <>
-      <Grid container>
-        <Grid item>
+      <Grid 
+        container
+        direction="row"
+        spacing={2}
+      >
+        <Grid 
+          item 
+          xs={6} 
+          sm={4} 
+          md={2}
+        >
           <Typography
-            className={classes.datetext} 
+            className={classes.text} 
             component="h1" 
             variant="h6"
           >
             {props.title}
           </Typography>
         </Grid>
-        <Grid item>
+        <Grid 
+          item 
+          xs={8} 
+          sm={6} 
+          md={4}
+        >
           <div>
           {
             props.type == "date" || props.type == "time" ? (
               <TextField
                 className={classes.dateinput}
                 required
+                fullWidth
                 id={props.id}
                 name={props.id}
                 type={props.type}
@@ -50,6 +65,7 @@ export default function FormElement( props ) {
                 <TextField
                   className={classes.input}
                   required
+                  fullWidth
                   id={props.id}
                   label={props.label}
                   name={props.id}
@@ -63,6 +79,7 @@ export default function FormElement( props ) {
                 <TextField
                   className={classes.input}
                   required
+                  fullWidth
                   id={props.id}
                   label={props.label}
                   name={props.id}
@@ -73,6 +90,7 @@ export default function FormElement( props ) {
               <TextField
                 className={classes.input}
                 required
+                fullWidth
                 id={props.id}
                 label={props.label}
                 name={props.id}

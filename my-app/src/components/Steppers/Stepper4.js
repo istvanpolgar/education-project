@@ -1,11 +1,13 @@
 import { 
-    Button,
+    Grid,
     Fab,
     Typography 
 } from "@material-ui/core";
 
 import {
-    Send
+    Send,
+    ArrowBack,
+    Restore,
 } from '@material-ui/icons';
 
 import { useStyles } from '../../styles/pageStyle';
@@ -15,35 +17,86 @@ export default function Stepper4( props ) {
 
     return (
         <div>
-        <Typography 
-            component="h1" 
-            variant="h5"
-        >
-            Your test is waiting for generation! Pleas click the SEND button!
-        </Typography>
-        <Button 
-            disabled={props.activeStep === 0} 
-            onClick={props.handleBack} 
-            className={classes.button}
-        >
-            Back
-        </Button>
-        <Button 
-            variant="contained"
-            color="primary"
-            disabled={props.activeStep === 4}
-            onClick={props.handleReset} 
-            className={classes.button}
-        >
-            Reset
-        </Button>
-        <Fab
-            component="button"
-            className={classes.submit}
-            onClick={props.handleSubmit}
-        >
-            <Send /> 
-        </Fab>
-    </div>
+            <Grid 
+                container
+                direction="column"  
+            >
+                <Grid item>
+                    <Typography 
+                        component="h1" 
+                        variant="h2"
+                    >
+                        Your test is waiting for generation!
+                    </Typography>
+                </Grid>
+                <Grid item spacing={2} className={classes.body}>
+                    <Grid container direction="row">
+                        <Grid item>
+                            <Typography 
+                                component="h1" 
+                                color="primary"
+                                className={classes.text}
+                                variant="h5"
+                            >
+                                Step back if you can fix something
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Fab
+                                component="button"
+                                onClick={props.handleBack} 
+                                className={classes.submit}
+                                size="large"
+                            >
+                                <ArrowBack />
+                            </Fab>
+                        </Grid>
+                    </Grid>
+                    <Grid container direction="row">
+                        <Grid item>
+                            <Typography 
+                                component="h1" 
+                                color="primary"
+                                className={classes.text}
+                                variant="h5"
+                            >
+                                Start again
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Fab
+                                component="button"
+                                onClick={props.handleReset} 
+                                className={classes.submit}
+                                size="large"
+                            >
+                                <Restore /> 
+                            </Fab>
+                        </Grid>
+                    </Grid>
+                    <Grid container direction="row">
+                        <Grid item>
+                            <Typography 
+                                component="h1" 
+                                color="primary"
+                                className={classes.text}
+                                variant="h5"
+                            >
+                                Start test generation
+                            </Typography>
+                        </Grid>
+                        <Grid item>
+                            <Fab
+                                component="button"
+                                className={classes.submit}
+                                onClick={props.handleSubmit}
+                            >
+                                <Send /> 
+                            </Fab>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </div>
     )
 }

@@ -7,7 +7,7 @@ import {
     Fab 
 } from '@material-ui/core';
 import {
-    Cancel
+    ClearRounded,
 } from '@material-ui/icons';
 import { useStyles } from '../../styles/pageStyle';
 
@@ -45,9 +45,13 @@ export default function Exercises( props ) {
 
     if(props.exercises){
         return(
-            <>
+            <div>
                 <FormControl>
-                    <Grid container spacing={3}>
+                    <Grid 
+                        container 
+                        direction="row" 
+                        spacing={2}
+                    >
                         <Grid item>
                             <InputLabel htmlFor="ex_group"> Exercise </InputLabel>
                             <Select 
@@ -89,10 +93,10 @@ export default function Exercises( props ) {
                                 onClick={onClick}
                                 size="small"
                             >
-                                <Cancel /> 
+                                <ClearRounded /> 
                             </Fab>
                         </Grid>
                     </Grid>
                 </FormControl>
-            </>
+            </div>
 )}}

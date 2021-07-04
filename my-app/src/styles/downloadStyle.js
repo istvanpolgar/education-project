@@ -1,13 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export const useStyles = makeStyles((theme) => ({
-    button: {
-        margin: theme.spacing(1),
+    root: {
+        margin: theme.spacing(15,5,5,5),
     },
-    paper: {
-        margin: theme.spacing(8, 4),
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+    submit: {
+        margin: theme.spacing(2),
     },
 }));
