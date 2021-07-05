@@ -108,6 +108,7 @@ export default function Page( props ) {
   };
 
   const handleSubmit = async () => {
+    console.log(exercises);
     const data = {
       'token': props.token,
       'exercises': JSON.stringify(exercises, ['id', 'category', 'title', 'nr']),

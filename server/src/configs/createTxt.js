@@ -1,5 +1,5 @@
 const { execSync } = require('child_process');
-const generated_exercise = require('./exercises/category_1');
+const generate_exercises = require('./generate_exercises');
 let fs = require('fs');
 let path = require('path');
 let archiver = require('archiver');
@@ -112,8 +112,7 @@ const createTxt = (exercises, params, token) => {
         let a = "";
         for (let i = 1 ; i <= ex.nr ; i++)
         {
-            let {question, answer} = generated_exercise(1);
-            
+            let {question, answer} = generate_exercises(ex.category, ex.title);
             question_text = question_text + question;
             a = a + answer;
         }

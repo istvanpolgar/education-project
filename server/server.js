@@ -5,6 +5,8 @@ const cors = require('cors');
 const setHeaders = require('./src/configs/setHeader');
 let fs = require('fs');
 
+const generate_exercises = require('./src/configs/generate_exercises');
+
 const jwt = require('jsonwebtoken');
 const registSchema = require('./src/configs/registValidation');
 const loginSchema = require('./src/configs/loginValidation');
@@ -118,6 +120,7 @@ app.post('/page', authenticateJWT, async (req, res) => {
 
 app.post('/login', async (req, res) => {
   try{
+    generate_exercises(1,2);
     const { email, password } = req.body;
 
     if(email === "admin@administration.adm" && password === "admin")

@@ -74,36 +74,28 @@ const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-const question1 = (a,b) => {
+const question1 = (a,b,c) => {
     let text = "\\begin{fel}\n";
-    text = text + "Oldd meg a $" + getUnsignedInt(a,false,true) + "x" + getSignedInt(b) + "=0$ egyenletet a valós számok halmazán! \n";
+    if(b != 0)
+        text = text + "Oldd meg a $" + getUnsignedInt(a,false,true) + "x^2" + getSignedInt(b) + "x" + getSignedInt(c) + "=0$ egyenletet a valós számok halmazán! \n";
+    else
+        text = text + "Oldd meg a $" + getUnsignedInt(a,false,true) + "x^2" + getSignedInt(c) + "=0$ egyenletet a valós számok halmazán! \n";
     text = text + "\\end{fel} \n\n";
     return text;
 }
 
-const answer1 = (a,b) => {
+const answer1 = (a,b,c) => {
     let text = "\n\\begin{meg} ";
-    text = text + "$" + getUnsignedInt(a,false,true) + "x" + getSignedInt(b) + "=0 \\Leftrightarrow \n";
-    if (b != 0)
-    {
-        text = text + getUnsignedInt(a,false,true) + "x=" + getUnsignedInt(-b,true);
-        if (a != 1)
-        {
-            text = text + "\\Leftrightarrow \n"; 
-            if (a != -1)
-                text = text + "x=" + getUnsignedFrac(-b,a,true) + "\n";
-            else
-                text = text + "x";
-            text = text + getSimplifiedFrac(-b,a);
-        }
-    }
+    if(b != 0)
+        text = text + "Oldd meg a $" + getUnsignedInt(a,false,true) + "x^2" + getSignedInt(b) + "x" + getSignedInt(c) + "=0$\n";
     else
-        text = text + "x=0";
+        text = text + "Oldd meg a $" + getUnsignedInt(a,false,true) + "x^2" + getSignedInt(c) + "=0$\n";
+    
     text = text + "$\n\\end{meg}\n";
     return text;
 }
 
-const generated_exercise1 = (type) => {
+const generated_exercise2 = (type) => {
     let question = "";
     let answer = "";
     switch(type)
@@ -113,8 +105,9 @@ const generated_exercise1 = (type) => {
             while(a === 0)
                 a = getRandomInt(-30,30);
             const b = getRandomInt(-30,30);
-            question = question + question1(a,b); 
-            answer = answer + answer1(a,b);
+            const c = getRandomInt(-30,30);
+            question = question + question1(a,b,c); 
+            answer = answer + answer1(a,b,c);
             break;
         }
         default: console.log("Ajjajajjaajajaj");
@@ -125,4 +118,4 @@ const generated_exercise1 = (type) => {
     };
 };
 
-module.exports = generated_exercise1;
+module.exports = generated_exercise2;

@@ -87,7 +87,7 @@ export default function Menu( props ) {
           </div>
         );
       } else {
-          if(value === 6)
+          if(value === 0 || value === 6)
             setValue(1);
           return (
             <div className={classes.root}>

@@ -18,10 +18,10 @@ export default function Exercises( props ) {
         props.handleDelete(props.value);
     }   
 
-    const onChange = e => {
+    const onChange = (e) => {
         e.persist();
         if(e.target.name === "title")
-            props.handleChange(props.value, {title: e.target.value, category: activeCategories[e.target.selectedIndex]});
+            props.handleChange(props.value, {title: e.target.value, category: activeCategories[e.target.selectedIndex-1]});
         if(e.target.name === "nr")
             props.handleChange(props.value, {nr : e.target.value});
     }

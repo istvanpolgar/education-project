@@ -29,7 +29,7 @@ export default function Stepper4( props ) {
                         Your test is waiting for generation!
                     </Typography>
                 </Grid>
-                <Grid item spacing={2} className={classes.body}>
+                <Grid container spacing={2} className={classes.body}>
                     <Grid container direction="row">
                         <Grid item>
                             <Typography 
