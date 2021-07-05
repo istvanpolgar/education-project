@@ -118,8 +118,7 @@ export default function Registration() {
             </Typography>
             <form 
               onSubmit={handleSubmit}
-              className={classes.form} 
-              noValidate
+              className={classes.form}
             >
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>

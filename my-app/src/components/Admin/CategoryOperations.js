@@ -1,3 +1,6 @@
+import { 
+    useState 
+} from 'react';
 import {  
     InputLabel,
     Grid,
@@ -12,12 +15,15 @@ import { handleFetch } from '../../functions/adminFetch';
 
 export default function CategoryOperations( props ) {
     const classes = useStyles();
+    const [addCategory, setAddCategory] = useState();
+    const [delCategory, setDelCategory] = useState();
 
     const handleDelete = async (e) => {
         e.preventDefault();
+        e.target.reset();
 
         const data = {
-            "category": e.target.value,
+            'category': delCategory,
         }
 
         const res = await handleFetch(data, '/deletecategory', 'POST', 'application/json');
@@ -27,14 +33,15 @@ export default function CategoryOperations( props ) {
             props.setMessage(res.message);
             props.setOpen(true);
         }
-        props.setCategories(props.categories.filter( cat => cat.title !== e.target.value ));
+        props.setChange(!props.change);
     }
 
     const handleAdd = async (e) => {
         e.preventDefault();
-        console.log(e.target.value);
+        e.target.reset();
+        
         const data = {
-            "category": e.target.value,
+            'category': addCategory
         }
 
         const res = await handleFetch(data, '/addcategory', 'POST', 'application/json');
@@ -44,52 +51,32 @@ export default function CategoryOperations( props ) {
             props.setMessage(res.message);
             props.setOpen(true);
         }
-        else
-            props.setCategories(...props.categories, e.target.value);
+        props.setChange(!props.change);
     }
 
     if(props.categories){
         return(
             <div className={classes.root}>
-                <Grid container spacing={1} direction='column'>
-                    <Grid item>
-                        <form>
-                            <Grid container spacing={1} direction='column'>
-                                <Grid item>
-                                    <InputLabel htmlFor="cat_group"> Category </InputLabel>
-                                    <Select 
-                                        native 
-                                        name="categories1"
-                                        id="cat_group"
-                                    >
-                                        <option aria-label="None" value="" />
-                                        { 
-                                            props.categories.map((catTip,i) => (
-                                                <option key={i} value={catTip}>{catTip}</option>
-                                        ))}
-                                    </Select>
-                                </Grid>
-                                <Grid item>
-                                    <Button
-                                        type="submit"
-                                        fullWidth
-                                        variant="contained"
-                                        className={classes.submit}
-                                        onClick={handleDelete}
-                                    >
-                                        Delete category
-                                    </Button>
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </Grid>
-                    <Grid item>
-                        <form
-                            onSubmit={handleAdd}
-                            noValidate
+                <Grid 
+                    container 
+                    spacing={2} 
+                    direction='column'>
+                    <form 
+                        onSubmit={handleAdd} 
+                    >
+                        <Typography
+                            component="h1" 
+                            variant="h5"
+                            className={classes.title}
                         >
-                            <Grid container spacing={1} direction='column'>
-                                <Grid container spacing={2} >
+                            Add a category 
+                        </Typography>
+                        <Grid item>
+                            <Grid 
+                                container 
+                                spacing={2} 
+                                direction='column'>
+                                <Grid container>
                                     <Grid item>
                                         <Typography
                                             component="h1" 
@@ -102,17 +89,18 @@ export default function CategoryOperations( props ) {
                                     <Grid item>   
                                         <TextField
                                             required
+                                            fullWidth
                                             id='category'
                                             label='Category'
                                             name='category'
                                             autoComplete='Category'
+                                            onChange={ e => { setAddCategory(e.target.value) }}
                                         />
                                     </Grid>
                                 </Grid>
                                 <Grid item>
                                     <Button
                                         type="submit"
-                                        fullWidth
                                         variant="contained"
                                         className={classes.submit}
                                     >
@@ -120,8 +108,50 @@ export default function CategoryOperations( props ) {
                                     </Button>
                                 </Grid>
                             </Grid>
-                        </form>
-                    </Grid>
+                        </Grid>
+                    </form>
+                    <form 
+                        onSubmit={handleDelete} 
+                    >
+                        <Typography
+                            component="h1" 
+                            variant="h5"
+                            className={classes.title}
+                        >
+                            Delete a category 
+                        </Typography>
+                        <Grid item>
+                            <Grid 
+                                container 
+                                direction='column'>
+                                <Grid item>
+                                    <InputLabel htmlFor="cat_group"> Category </InputLabel>
+                                    <Select 
+                                        native 
+                                        fullWidth
+                                        name="categories1"
+                                        id="cat_group"
+                                        onChange={ e => { setDelCategory(e.target.value)}}
+                                    >
+                                        <option aria-label="None" value="" />
+                                        { 
+                                            props.categories.map((catTip,i) => (
+                                                <option key={i} value={catTip}>{catTip}</option>
+                                        ))}
+                                    </Select>
+                                </Grid>
+                                <Grid item>
+                                    <Button
+                                        type="submit"
+                                        variant="contained"
+                                        className={classes.submit}
+                                    >
+                                        Delete category
+                                    </Button>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </form>
                 </Grid>
             </div>
 )}}

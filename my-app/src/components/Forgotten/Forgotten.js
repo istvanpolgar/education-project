@@ -94,7 +94,6 @@ import {
             <form 
               onSubmit={handleSubmit} 
               className={classes.form} 
-              noValidate
             >
               <TextField
                 variant="outlined"

@@ -14,6 +14,7 @@ import {
   MenuBook,
   Grain,
   Functions,
+  Settings
 } from '@material-ui/icons';
 import { useStyles } from '../../styles/menuStyle';
 
@@ -42,6 +43,8 @@ export default function Menu( props ) {
       setValue(6);
     if(location.pathname == '/logout')
       setValue(7);
+    if(location.pathname == '/admin')
+      setValue(8);
   },[location.pathname])
   
   const handleChange = (evet, newValue) => {
@@ -55,6 +58,7 @@ export default function Menu( props ) {
       case 5: history.push('/signup'); break;
       case 6: history.push('/login'); break;
       case 7: history.push('/logout'); break;
+      case 8: history.push('/admin'); break;
     }
   };
 
@@ -62,30 +66,51 @@ export default function Menu( props ) {
     return (<></>)
   else
     if(props.token)
-    {
-      if(value === 6)
-        setValue(1);
-      return (
-        <div className={classes.root}>
-          <AppBar color="inherit">
-            <Tabs
-              value={value}
-              onChange={handleChange}
-              indicatorColor="primary"
-              textColor="primary"
-              aria-label="menu items"
-              centered
-            >
-              <Tab label="Generate" value={1} icon={<Home /> } className={classes.icon}/>
-              <Tab label="Random test" value={2} icon={<Grain />} className={classes.icon} />
-              <Tab label="Tutorial" value={3} icon={<MenuBook/>} className={classes.icon}/>
-              <Tab label="Information" value={4} icon={<Info />} className={classes.icon}/>
-              <Tab label="LogOut" value={7} icon={<Lock />} className={classes.icon} />
-            </Tabs>
-          </AppBar>
-        </div>
-      );
-    } else {
+      if(props.token == "administration") {
+        if(value === 0 || value === 6)
+          setValue(8);
+        return (
+          <div className={classes.root}>
+            <AppBar color="inherit">
+              <Tabs
+                value={value}
+                onChange={handleChange}
+                indicatorColor="primary"
+                textColor="primary"
+                aria-label="menu items"
+                centered
+              >
+                <Tab label="Admin" value={8} icon={<Settings /> } className={classes.icon}/>
+                <Tab label="LogOut" value={7} icon={<Lock />} className={classes.icon} />
+              </Tabs>
+            </AppBar>
+          </div>
+        );
+      } else {
+          if(value === 6)
+            setValue(1);
+          return (
+            <div className={classes.root}>
+              <AppBar color="inherit">
+                <Tabs
+                  value={value}
+                  onChange={handleChange}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  aria-label="menu items"
+                  centered
+                >
+                  <Tab label="Generate" value={1} icon={<Home /> } className={classes.icon}/>
+                  <Tab label="Random test" value={2} icon={<Grain />} className={classes.icon} />
+                  <Tab label="Tutorial" value={3} icon={<MenuBook/>} className={classes.icon}/>
+                  <Tab label="Information" value={4} icon={<Info />} className={classes.icon}/>
+                  <Tab label="LogOut" value={7} icon={<Lock />} className={classes.icon} />
+                </Tabs>
+              </AppBar>
+            </div>
+          );
+      }
+    else {
       if(value === 7)
         setValue(0);
       return (

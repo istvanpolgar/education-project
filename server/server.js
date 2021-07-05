@@ -31,12 +31,68 @@ app.use(setHeaders);
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
-app.post('/addcategory', (req, res) => {
-  console.log(req.body);
-  if(req.body)
-    req.send('ok');
-  else
-    res.json({code: 400, message: "Something wrong!"});
+app.post('/addcategory', async (req, res) => {
+  try{
+    const { category } = req.body;
+    await database.ref('exercises/' + category)
+    .set({'title': category, 'tips':''}) 
+    .then( () => {
+      res.send({'state':'added'});
+    })
+    .catch((error) => {
+      res.send(error);
+    })
+  } catch (e) {
+    res.send({code: 400, message: "Actualy fields are required!"});
+  }
+});
+
+app.post('/deletecategory', async (req, res) => {
+  try{
+    const { category } = req.body;
+    await database.ref('exercises/' + category)
+    .remove() 
+    .then( () => {
+      res.send({'state':'deleted'});
+    })
+    .catch((error) => {
+      res.send(error);
+    })
+  } catch (e) {
+    res.send({code: 400, message: "Actualy fields are required!"});
+  }
+});
+
+app.post('/addexercise', async (req, res) => {
+  try{
+    const { category, exercise } = req.body;
+    await database.ref('exercises/' + category + '/tips/' + exercise)
+    .set({'name': exercise})
+    .then( () => {
+      res.send({'state':'added'});
+    })
+    .catch((error) => {
+      res.send(error);
+    })
+  } catch (e) {
+    res.send({code: 400, message: "Actualy fields are required!"});
+  }
+});
+
+app.post('/deleteexercise', async (req, res) => {
+  try{
+    const { category, exercise } = req.body;
+    await database.ref('exercises/' + category + '/tips/' + exercise)
+    .remove()
+    .then( () => {
+      res.send({'state':'deleted'});
+    })
+    .catch((error) => {
+      res.send(error);
+    })
+  } catch (e) {
+    res.send({code: 400, message: "Actualy fields are required!"});
+  }
 });
 
 app.post('/page', authenticateJWT, async (req, res) => {
@@ -168,35 +224,38 @@ app.post('/forgotten_pass', async (req, res) => {
       res.send({code: 400, message: error.message});
     })
   } catch (e) {
-  res.json({code: 400, message: "Both fields are required!"});
+  res.send({code: 400, message: "Both fields are required!"});
 }
 })
 
-app.post('/exercises', (req, res) => {
-  
-
-  res.send(
-  {
-    'exercises': [
-    {
-      'title': 'Elsőfokú egyenlet',
-      'tips': [
-        { 'name': 'Alapegyenlet' },
-        { 'name': 'Visszavezethető' },
-        { 'name': 'Moduluszos' },
-        { 'name': 'Egészrészes' }
-      ]
-    },
-    {
-      'title': 'Másodfokú egyenlet',
-      'tips': [
-        { 'name': 'Alapegyenlet' },
-        { 'name': 'Visszavezethető' },
-        { 'name': 'Viéte-képletek' },
-        { 'name': 'Paraméteres' }
-      ] 
-    }
-  ]})
+app.post('/exercises', async (req, res) => {
+  let exercises = [];
+  try{
+    await database.ref('exercises')
+    .once('value')
+    .then((ex) => {
+      ex.forEach(cat => {
+        let tips = [];
+        cat.forEach(cat2 => {
+          cat2.forEach(ex => {
+            tips.push({'name': ex.val().name});
+          })
+        });
+        exercises.push({
+          'title': cat.val().title,
+          'tips': tips
+        })
+      });
+    })
+    .then(()=>{
+      res.send({'exercises': exercises});
+    })
+    .catch((error) => {
+      res.send({code: 400, message: error.message});
+    })
+  } catch (e) {
+    res.send({code: 400, message: "Something wrong in database!"});
+  }
 });
 
 app.post('/generate', async (req, res) => {

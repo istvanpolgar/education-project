@@ -98,7 +98,6 @@ export default function Login({ setToken }) {
           <form 
             onSubmit={handleSubmit} 
             className={classes.form} 
-            noValidate
           >
             <TextField
               variant="outlined"
